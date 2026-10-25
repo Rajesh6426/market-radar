@@ -9,7 +9,7 @@ WATCHLIST = [
     "RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS",
     "BHARTIARTL.NS", "LT.NS", "SBIN.NS", "AXISBANK.NS", "TITAN.NS",
     "ITC.NS", "SUNPHARMA.NS", "MARUTI.NS", "BAJFINANCE.NS",
-    # Fundamental Small-Caps
+    # Fundamental Small & Mid-Caps
     "CAMS.NS", "NESCO.NS", "CLEAN.NS", "IONEXCHANG.NS", "CASTROLIND.NS"
 ]
 
@@ -30,7 +30,7 @@ def to_crores_str(val):
 
 def classify_market_cap(mcap_raw):
     if not mcap_raw or mcap_raw <= 0:
-        return "N/A", "Cap N/A"
+        return 0, "N/A", "Cap N/A"
     mcap_cr = round(mcap_raw / 10000000, 1)
     if mcap_cr >= 20000:
         cap_type = "Large-Cap"
@@ -38,10 +38,9 @@ def classify_market_cap(mcap_raw):
         cap_type = "Mid-Cap"
     else:
         cap_type = "Small-Cap"
-    return f"₹{mcap_cr:,.0f} Cr", cap_type
+    return mcap_cr, f"₹{mcap_cr:,.0f} Cr", cap_type
 
 def parse_pl_table(df, fallback_rev=None, fallback_pat=None):
-    """Accurately extracts multi-period Top-line Revenue, Operating Profit, PAT, and Margin."""
     periods = []
     if df is None or not isinstance(df, pd.DataFrame) or df.empty:
         return periods
@@ -69,25 +68,21 @@ def parse_pl_table(df, fallback_rev=None, fallback_pat=None):
         for col in cols:
             label = col.strftime('%b %Y') if hasattr(col, 'strftime') else str(col)[:10]
 
-            # 1. Total Revenue
             rev_val = None
             if rev_key is not None:
                 val = df.loc[rev_key, col]
                 rev_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
 
-            # 2. Operating Profit
             op_val = None
             if op_key is not None:
                 val = df.loc[op_key, col]
                 op_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
 
-            # 3. Net Profit (PAT)
             pat_val = None
             if pat_key is not None:
                 val = df.loc[pat_key, col]
                 pat_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
 
-            # Fallbacks if index didn't resolve correctly on the latest column
             if rev_val is None and col == cols[0] and fallback_rev:
                 rev_val = fallback_rev
             if pat_val is None and col == cols[0] and fallback_pat:
@@ -110,26 +105,26 @@ def parse_pl_table(df, fallback_rev=None, fallback_pat=None):
                 "revenue": to_crores_str(rev_val),
                 "op_profit": to_crores_str(op_val),
                 "pat": to_crores_str(pat_val),
-                "margin": margin_str
+                "margin": margin_str,
+                "raw_rev": rev_val,
+                "raw_pat": pat_val
             })
     except Exception as e:
         print(f"Error parsing financial table: {e}")
 
     return periods
 
-def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
+def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
     info = ticker_obj.info or {}
 
-    # Market Cap
     raw_mcap = info.get('marketCap')
     if not raw_mcap:
         try:
             raw_mcap = getattr(ticker_obj.fast_info, 'market_cap', None)
         except Exception:
             raw_mcap = None
-    mcap_str, cap_category = classify_market_cap(raw_mcap)
+    mcap_num, mcap_str, cap_category = classify_market_cap(raw_mcap)
 
-    # Ratios
     pe = info.get('trailingPE')
     pe_val = round(pe, 1) if pe and pe > 0 else None
     
@@ -151,7 +146,7 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     roa = info.get('returnOnAssets')
     roa_val = round(roa * 100, 2) if roa is not None else None
 
-    # TTM P&L
+    # Income statement headline
     revenue = info.get('totalRevenue')
     ebitda = info.get('ebitda') or info.get('operatingIncome')
     net_income = info.get('netIncomeToCommon')
@@ -179,6 +174,23 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     except Exception:
         pass
 
+    # Calculate 3Y CAGR Sales & Profit if >= 3 periods available
+    sales_3y_cagr = None
+    pat_3y_cagr = None
+    try:
+        if len(annual_pl) >= 3:
+            latest_r = annual_pl[0].get("raw_rev")
+            oldest_r = annual_pl[2].get("raw_rev")
+            if latest_r and oldest_r and float(oldest_r) > 0 and float(latest_r) > 0:
+                sales_3y_cagr = round((((float(latest_r) / float(oldest_r)) ** (1/2)) - 1) * 100, 1)
+
+            latest_p = annual_pl[0].get("raw_pat")
+            oldest_p = annual_pl[2].get("raw_pat")
+            if latest_p and oldest_p and float(oldest_p) > 0 and float(latest_p) > 0:
+                pat_3y_cagr = round((((float(latest_p) / float(oldest_p)) ** (1/2)) - 1) * 100, 1)
+    except Exception:
+        pass
+
     # Balance Sheet summary
     total_assets = info.get('totalAssets')
     total_debt = info.get('totalDebt')
@@ -197,6 +209,7 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     debt_str = to_crores_str(total_debt) if total_debt else "₹0 Cr"
     cash_str = to_crores_str(total_cash)
 
+    # Debt-to-Equity
     debt_to_eq = info.get('debtToEquity')
     de_val = None
     if debt_to_eq is not None:
@@ -204,25 +217,133 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     elif total_debt is not None and total_equity and total_equity > 0:
         de_val = round(total_debt / total_equity, 2)
 
-    de_str = f"{de_val}x" if de_val is not None else "N/A"
+    # Interest Coverage
+    op_inc = info.get('operatingIncome') or ebitda
+    int_exp = info.get('interestExpense')
+    int_cov = None
+    if op_inc and int_exp and float(int_exp) > 0:
+        int_cov = round(float(op_inc) / float(int_exp), 1)
 
-    val_pass = (peg_val is not None and peg_val <= 2.5) or (pe_val is not None and pe_val <= 50)
+    # Clean multi-period raw values before serialization
+    for p in annual_pl:
+        p.pop("raw_rev", None)
+        p.pop("raw_pat", None)
+    for p in quarterly_pl:
+        p.pop("raw_rev", None)
+        p.pop("raw_pat", None)
 
-    if symbol in FINANCIAL_STOCKS:
-        bank_sound = (roa_val is not None and roa_val >= 0.9) and (roe_val is not None and roe_val >= 11.0) and val_pass
-        fund_sound = bool(bank_sound)
-        p_label, p_val = "ROA", f"{roa_val}%" if roa_val else "N/A"
-        s_label, s_val = "P/B", f"{pb_val}x" if pb_val else "N/A"
+    # --- SECTOR SCREENER RULES IMPLEMENTATION ---
+    is_finance = symbol in FINANCIAL_STOCKS
+    passed_rules = 0
+    total_rules = 0
+    checks = []
+
+    if is_finance:
+        # Bank & NBFC Engine
+        total_rules = 7
+
+        # 1. Market Cap > 2000 Cr
+        r1 = mcap_num >= 2000
+        checks.append(f"M.Cap > ₹2000Cr: {'✓' if r1 else '✗'}")
+        if r1: passed_rules += 1
+
+        # 2. ROA > 1.2%
+        r2 = roa_val is not None and roa_val >= 1.2
+        checks.append(f"ROA > 1.2%: {'✓' if r2 else '✗'} ({roa_val}%)")
+        if r2: passed_rules += 1
+
+        # 3. ROE > 13%
+        r3 = roe_val is not None and roe_val >= 13.0
+        checks.append(f"ROE > 13%: {'✓' if r3 else '✗'} ({roe_val}%)")
+        if r3: passed_rules += 1
+
+        # 4. P/B < 2.5x
+        r4 = pb_val is not None and pb_val <= 2.5
+        checks.append(f"P/B < 2.5x: {'✓' if r4 else '✗'} ({pb_val}x)")
+        if r4: passed_rules += 1
+
+        # 5. Sales / Revenue Growth (3Y or TTM)
+        r5 = (sales_3y_cagr is not None and sales_3y_cagr >= 12.0) or (info.get('revenueGrowth', 0) >= 0.10)
+        checks.append(f"Sales Grw > 12%: {'✓' if r5 else '✗'}")
+        if r5: passed_rules += 1
+
+        # 6. Profit Growth (3Y or TTM)
+        r6 = (pat_3y_cagr is not None and pat_3y_cagr >= 14.0) or (info.get('earningsGrowth', 0) >= 0.12)
+        checks.append(f"PAT Grw > 14%: {'✓' if r6 else '✗'}")
+        if r6: passed_rules += 1
+
+        # 7. Valuation Guardrail (PEG <= 2.2 or P/E <= 25)
+        r7 = (peg_val is not None and peg_val <= 2.2) or (pe_val is not None and pe_val <= 25)
+        checks.append(f"Valuation OK: {'✓' if r7 else '✗'}")
+        if r7: passed_rules += 1
+
+        fund_sound = passed_rules >= 5
+        sector_type = "BANK/NBFC"
+        primary_label, primary_val = "ROA", f"{roa_val}%" if roa_val else "N/A"
+        secondary_label, secondary_val = "P/B", f"{pb_val}x" if pb_val else "N/A"
         de_str = "N/A (Bank)"
+
     else:
-        corp_sound = (roe_val is not None and roe_val >= 14.0) and (de_val is not None and de_val <= 1.2) and (pm_val is not None and pm_val >= 8.0) and val_pass
-        fund_sound = bool(corp_sound)
-        p_label, p_val = "D/E", de_str
-        s_label, s_val = "Margin", margin_str
+        # Corporate Engine
+        total_rules = 8
+
+        # 1. Market Cap > 1000 Cr
+        r1 = mcap_num >= 1000
+        checks.append(f"M.Cap > ₹1000Cr: {'✓' if r1 else '✗'}")
+        if r1: passed_rules += 1
+
+        # 2. ROCE / ROIC >= 15% (or ROE proxy)
+        r2 = roe_val is not None and roe_val >= 15.0
+        checks.append(f"ROE/ROCE > 15%: {'✓' if r2 else '✗'} ({roe_val}%)")
+        if r2: passed_rules += 1
+
+        # 3. Debt to Equity < 0.5
+        r3 = (de_val is not None and de_val <= 0.5) or (total_debt == 0)
+        checks.append(f"D/E < 0.5: {'✓' if r3 else '✗'} ({de_val}x)")
+        if r3: passed_rules += 1
+
+        # 4. Interest Coverage > 4.0x (or virtually debt-free)
+        r4 = (int_cov is not None and int_cov >= 4.0) or (de_val is not None and de_val <= 0.1)
+        checks.append(f"Int Cov > 4x: {'✓' if r4 else '✗'}")
+        if r4: passed_rules += 1
+
+        # 5. Sales Growth >= 10%
+        r5 = (sales_3y_cagr is not None and sales_3y_cagr >= 10.0) or (info.get('revenueGrowth', 0) >= 0.08)
+        checks.append(f"Sales Grw > 10%: {'✓' if r5 else '✗'}")
+        if r5: passed_rules += 1
+
+        # 6. Profit Growth >= 12%
+        r6 = (pat_3y_cagr is not None and pat_3y_cagr >= 12.0) or (info.get('earningsGrowth', 0) >= 0.10)
+        checks.append(f"PAT Grw > 12%: {'✓' if r6 else '✗'}")
+        if r6: passed_rules += 1
+
+        # 7. Margins >= 10%
+        r7 = pm_val is not None and pm_val >= 10.0
+        checks.append(f"Margin > 10%: {'✓' if r7 else '✗'} ({margin_str})")
+        if r7: passed_rules += 1
+
+        # 8. Valuation Sanity (PEG <= 2.0 or PE <= 40)
+        r8 = (peg_val is not None and peg_val <= 2.2) or (pe_val is not None and pe_val <= 42)
+        checks.append(f"Valuation OK: {'✓' if r8 else '✗'}")
+        if r8: passed_rules += 1
+
+        fund_sound = passed_rules >= 6
+        sector_type = "CORPORATE"
+        de_str = f"{de_val}x" if de_val is not None else "N/A"
+        primary_label, primary_val = "D/E", de_str
+        secondary_label, secondary_val = "Margin", margin_str
+
+    score_str = f"{passed_rules}/{total_rules}"
 
     return {
         "mcap_str": mcap_str,
         "cap_category": cap_category,
+        "sector_type": sector_type,
+        "screener_score": score_str,
+        "passed_rules": passed_rules,
+        "total_rules": total_rules,
+        "screener_passed": fund_sound,
+        "checks": checks,
         "pe": f"{pe_val}x" if pe_val else "N/A",
         "forward_pe": f"{f_pe_val}x" if f_pe_val else "N/A",
         "peg": f"{peg_val}" if peg_val else "N/A",
@@ -230,11 +351,10 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
         "roe": f"{roe_val}%" if roe_val else "N/A",
         "roa": f"{roa_val}%" if roa_val else "N/A",
         "de": de_str,
-        "primary_label": p_label,
-        "primary_val": p_val,
-        "secondary_label": s_label,
-        "secondary_val": s_val,
-        "fund_strong": fund_sound,
+        "primary_label": primary_label,
+        "primary_val": primary_val,
+        "secondary_label": secondary_label,
+        "secondary_val": secondary_val,
         "revenue": rev_str,
         "op_profit": op_str,
         "pat": pat_str,
@@ -254,7 +374,7 @@ def run_scan():
     matches = []
     all_data = []
 
-    print(f"Scanning {len(WATCHLIST)} symbols for Complete Radar & Statements...")
+    print(f"Scanning {len(WATCHLIST)} symbols using Institutional Screener Rules...")
 
     for ticker in WATCHLIST:
         symbol = ticker.replace(".NS", "")
@@ -290,8 +410,25 @@ def run_scan():
             near_52w_high = pct_off_52w <= 15.0
             tech_match = bool(above_mas and volume_surge and rsi_valid and near_52w_high)
 
-            fund = extract_financials(t, symbol, curr_price)
-            is_match = bool(tech_match and fund["fund_strong"])
+            fund = evaluate_screener_rules(t, symbol, curr_price)
+            
+            # Conviction flags:
+            # 1. Full Buy: Tech breakout + Screener quality pass
+            full_conviction = bool(tech_match and fund["screener_passed"])
+            
+            # Conviction tag calculation
+            if full_conviction:
+                conviction_tag = "INSTITUTIONAL BUY"
+                badge_type = "badge-match"
+            elif fund["screener_passed"]:
+                conviction_tag = "QUALITY COMPOUNDER"
+                badge_type = "badge-fund-good"
+            elif tech_match:
+                conviction_tag = "MOMENTUM ONLY"
+                badge_type = "badge-momentum"
+            else:
+                conviction_tag = "NEUTRAL"
+                badge_type = "badge-neutral"
 
             item = {
                 "symbol": symbol,
@@ -301,14 +438,16 @@ def run_scan():
                 "vol_surge": round(vol_multiplier, 2),
                 "rsi": round(curr_rsi, 1),
                 "tech_match": tech_match,
-                "matched": is_match,
+                "matched": full_conviction,
+                "conviction_tag": conviction_tag,
+                "badge_type": badge_type,
                 **fund
             }
             all_data.append(item)
-            if is_match:
+            if full_conviction:
                 matches.append(item)
 
-            print(f"[✓] {symbol:10} | Annual: {len(fund['annual_pl'])} | Qtr: {len(fund['quarterly_pl'])} | Rev: {fund['revenue']} | PAT: {fund['pat']}")
+            print(f"[{conviction_tag:18}] {symbol:10} | Screener Score: {fund['screener_score']} | Vol: {vol_multiplier:.2f}x | RSI: {curr_rsi:.1f}")
 
         except Exception as e:
             print(f"[!] Error on {symbol}: {e}")
