@@ -1,0 +1,38 @@
+name: Daily Cloud Stock Scan
+
+on:
+  schedule:
+    # 10:30 AM UTC = 4:00 PM IST (Mon to Fri)
+    - cron: '30 10 * * 1-5'
+  workflow_dispatch: # Allows manual run anytime from GitHub
+
+jobs:
+  scan-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install pandas yfinance requests pytz curl_cffi
+
+      - name: Run Momentum Scanner
+        run: |
+          python scanner.py
+
+      - name: Commit & Push Results
+        run: |
+          git config --global user.name "MarketRadarBot"
+          git config --global user.email "bot@github.com"
+          git add results.json
+          git commit -m "Auto-update market radar results [skip ci]" || echo "No changes to commit"
+          git push

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Momentum Radar</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-white: #f0f6fc;
+      --accent-green: #238636;
+      --tag-green: #2ea043;
+      --tag-neutral: #8b949e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      color: var(--text-white);
+      margin: 0 0 8px 0;
+      font-size: 24px;
+    }
+    .timestamp {
+      font-size: 13px;
+      color: #8b949e;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-match {
+      background: rgba(46, 160, 67, 0.2);
+      color: #3fb950;
+      border: 1px solid rgba(46, 160, 67, 0.4);
+    }
+    .badge-neutral {
+      background: rgba(139, 148, 158, 0.15);
+      color: #8b949e;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      color: var(--text-white);
+      font-size: 18px;
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    th {
+      color: #8b949e;
+      font-weight: 600;
+    }
+    .bold {
+      font-weight: 600;
+      color: var(--text-white);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎯 Market Momentum Radar</h1>
+      <div class="timestamp" id="last-updated">Checking latest scan...</div>
+    </header>
+
+    <div class="card">
+      <h2>🔥 High-Conviction Matches</h2>
+      <div id="matches-table-container">Loading...</div>
+    </div>
+
+    <div class="card">
+      <h2>📊 All Monitored Watchlist</h2>
+      <div id="all-table-container">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    fetch('results.json?v=' + new Date().getTime())
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count} setups found)`;
+        
+        // Render Matches
+        const matchesContainer = document.getElementById('matches-table-container');
+        if (data.matches.length === 0) {
+          matchesContainer.innerHTML = '<p style="color:#8b949e;">No symbols met the strict criteria on the latest scan. Zero trade day.</p>';
+        } else {
+          matchesContainer.innerHTML = buildTable(data.matches, true);
+        }
+
+        // Render All Scanned
+        document.getElementById('all-table-container').innerHTML = buildTable(data.all_scanned, false);
+      })
+      .catch(err => {
+        document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting first scan data...</p>';
+      });
+
+    function buildTable(list, isMatchOnly) {
+      let rows = list.map(item => `
+        <tr>
+          <td class="bold">${item.symbol}</td>
+          <td>₹${item.price}</td>
+          <td>${item.vol_surge}x</td>
+          <td>${item.rsi}</td>
+          <td>
+            <span class="badge ${item.matched ? 'badge-match' : 'badge-neutral'}">
+              ${item.matched ? 'ACCUMULATION' : 'NEUTRAL'}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+
+      return `
+        <table>
+          <thead>
+            <tr>
+              <th>Stock</th>
+              <th>Price</th>
+              <th>Vol Surge</th>
+              <th>RSI</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+  </script>
+</body>
+</html>
