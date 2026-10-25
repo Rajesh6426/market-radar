@@ -1,7 +1,149 @@
 {
-  "last_updated": "2026-10-25 12:01 PM IST",
+  "last_updated": "2026-10-25 12:27 PM IST",
   "total_scanned": 19,
-  "match_count": 0,
-  "matches": [],
-  "all_scanned": []
+  "match_count": 1,
+  "matches": [
+    {
+      "symbol": "INFY",
+      "price": 1153.8,
+      "vol_surge": 2.43,
+      "rsi": 69.7,
+      "matched": true
+    }
+  ],
+  "all_scanned": [
+    {
+      "symbol": "RELIANCE",
+      "price": 1190.0,
+      "vol_surge": 1.0,
+      "rsi": 55.2,
+      "matched": false
+    },
+    {
+      "symbol": "TCS",
+      "price": 2530.0,
+      "vol_surge": 1.21,
+      "rsi": 85.5,
+      "matched": false
+    },
+    {
+      "symbol": "INFY",
+      "price": 1153.8,
+      "vol_surge": 2.43,
+      "rsi": 69.7,
+      "matched": true
+    },
+    {
+      "symbol": "HDFCBANK",
+      "price": 692.8,
+      "vol_surge": 0.6,
+      "rsi": 38.7,
+      "matched": false
+    },
+    {
+      "symbol": "ICICIBANK",
+      "price": 1394.2,
+      "vol_surge": 0.95,
+      "rsi": 69.5,
+      "matched": false
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "price": 1892.1,
+      "vol_surge": 1.23,
+      "rsi": 71.5,
+      "matched": false
+    },
+    {
+      "symbol": "LT",
+      "price": 3647.0,
+      "vol_surge": 1.07,
+      "rsi": 45.7,
+      "matched": false
+    },
+    {
+      "symbol": "SBIN",
+      "price": 958.6,
+      "vol_surge": 1.01,
+      "rsi": 51.8,
+      "matched": false
+    },
+    {
+      "symbol": "AXISBANK",
+      "price": 1217.5,
+      "vol_surge": 1.07,
+      "rsi": 50.1,
+      "matched": false
+    },
+    {
+      "symbol": "TITAN",
+      "price": 4299.7,
+      "vol_surge": 0.79,
+      "rsi": 33.2,
+      "matched": false
+    },
+    {
+      "symbol": "ITC",
+      "price": 257.9,
+      "vol_surge": 0.84,
+      "rsi": 51.7,
+      "matched": false
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "price": 1748.0,
+      "vol_surge": 0.69,
+      "rsi": 36.0,
+      "matched": false
+    },
+    {
+      "symbol": "MARUTI",
+      "price": 11230.0,
+      "vol_surge": 0.72,
+      "rsi": 45.6,
+      "matched": false
+    },
+    {
+      "symbol": "BAJFINANCE",
+      "price": 928.95,
+      "vol_surge": 0.71,
+      "rsi": 45.3,
+      "matched": false
+    },
+    {
+      "symbol": "CAMS",
+      "price": 650.0,
+      "vol_surge": 1.27,
+      "rsi": 41.5,
+      "matched": false
+    },
+    {
+      "symbol": "NESCO",
+      "price": 983.2,
+      "vol_surge": 1.19,
+      "rsi": 30.9,
+      "matched": false
+    },
+    {
+      "symbol": "CLEAN",
+      "price": 713.5,
+      "vol_surge": 1.31,
+      "rsi": 27.4,
+      "matched": false
+    },
+    {
+      "symbol": "IONEXCHANG",
+      "price": 337.75,
+      "vol_surge": 1.6,
+      "rsi": 9.8,
+      "matched": false
+    },
+    {
+      "symbol": "CASTROLIND",
+      "price": 194.64,
+      "vol_surge": 0.83,
+      "rsi": 38.0,
+      "matched": false
+    }
+  ]
 }
