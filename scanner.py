@@ -1,34 +1,383 @@
 import json
+import time
 from datetime import datetime
+import numpy as np
 import pandas as pd
 import pytz
 import yfinance as yf
 
-WATCHLIST = [
-    # Large-Cap Core
-    "RELIANCE.NS",
-    "TCS.NS",
-    "INFY.NS",
-    "HDFCBANK.NS",
-    "ICICIBANK.NS",
-    "BHARTIARTL.NS",
-    "LT.NS",
-    "SBIN.NS",
-    "AXISBANK.NS",
-    "TITAN.NS",
-    "ITC.NS",
-    "SUNPHARMA.NS",
-    "MARUTI.NS",
-    "BAJFINANCE.NS",
-    # Fundamental Small & Mid-Caps
-    "CAMS.NS",
-    "NESCO.NS",
-    "CLEAN.NS",
-    "IONEXCHANG.NS",
-    "CASTROLIND.NS",
-]
+# Broad Financials list for dual-engine sector isolation
+FINANCIAL_STOCKS = {
+    "HDFCBANK",
+    "ICICIBANK",
+    "SBIN",
+    "AXISBANK",
+    "KOTAKBANK",
+    "BAJFINANCE",
+    "BAJAJFINSV",
+    "CHOLAFIN",
+    "SHRIRAMFIN",
+    "MUTHOOTFIN",
+    "BANKBARODA",
+    "CANBK",
+    "PNB",
+    "INDUSINDBK",
+    "FEDERALBNK",
+    "IDFCFIRSTB",
+    "AUBANK",
+    "BANDHANBNK",
+    "POONAWALLA",
+    "M&MFIN",
+    "LICHSGFIN",
+    "MANAPPURAM",
+    "SBICARD",
+    "HDFCAMC",
+    "NAM-INDIA",
+}
 
-FINANCIAL_STOCKS = ["HDFCBANK", "ICICIBANK", "SBIN", "AXISBANK", "BAJFINANCE"]
+# Complete Nifty 500 Liquid Ticker Universe
+NIFTY_500_SYMBOLS = [
+    "360ONE",
+    "3MINDIA",
+    "ABB",
+    "ACC",
+    "AIAENG",
+    "APLAPOLLO",
+    "AUBANK",
+    "AARTIDRUGS",
+    "AARTIIND",
+    "AAVAS",
+    "ABBOTINDIA",
+    "ACE",
+    "ADANIENSOL",
+    "ADANIENT",
+    "ADANIGREEN",
+    "ADANIPORTS",
+    "ADANIPOWER",
+    "AFFLE",
+    "AJANTPHARM",
+    "ALKEM",
+    "ALOKINDS",
+    "AMBER",
+    "AMBUJACEM",
+    "ANANDRATHI",
+    "ANGELONE",
+    "APARINDS",
+    "APOLLOHOSP",
+    "APOLLOTYRE",
+    "APTUS",
+    "ARE&M",
+    "ASHOKLEY",
+    "ASIANPAINT",
+    "ASTERDM",
+    "ASTRAL",
+    "ATGL",
+    "ATUL",
+    "AUROPHARMA",
+    "AVANTIFEED",
+    "AXISBANK",
+    "BAJAJ-AUTO",
+    "BAJAJFINSV",
+    "BAJAJHLDNG",
+    "BAJFINANCE",
+    "BALAMINES",
+    "BALKRISIND",
+    "BALRAMCHIN",
+    "BANDHANBNK",
+    "BANKBARODA",
+    "BANKINDIA",
+    "BATAINDIA",
+    "BAYERCROP",
+    "BERGEPAINT",
+    "BDL",
+    "BEL",
+    "BEML",
+    "BHARATFORG",
+    "BHARTIARTL",
+    "BHEL",
+    "BIOCON",
+    "BIRLACORPN",
+    "BLS",
+    "BLUEDART",
+    "BLUESTARCO",
+    "BOSCHLTD",
+    "BPCL",
+    "BRIGADE",
+    "BRITANNIA",
+    "BSOFT",
+    "CAMPUS",
+    "CANFINHOME",
+    "CANBK",
+    "CAPL",
+    "CARBORUNIV",
+    "CASTROLIND",
+    "CEATLTD",
+    "CENTRALBK",
+    "CDSL",
+    "CENTURYPLY",
+    "CENTURYTEX",
+    "CERA",
+    "CESC",
+    "CGPOWER",
+    "CHALET",
+    "CHAMBLFERT",
+    "CHEMPLASTS",
+    "CHOLAHLDNG",
+    "CHOLAFIN",
+    "CIPLA",
+    "CLEAN",
+    "COALINDIA",
+    "COCHINSHIP",
+    "COFORGE",
+    "COLPAL",
+    "CONCOR",
+    "COROMANDEL",
+    "CRAFTSMAN",
+    "CREDITACC",
+    "CROMPTON",
+    "CUMMINSIND",
+    "CYIENT",
+    "DABUR",
+    "DALBHARAT",
+    "DEEPAKNTR",
+    "DELHIVERY",
+    "DEVYANI",
+    "DIVISLAB",
+    "DIXON",
+    "DLF",
+    "DMART",
+    "DRREDDY",
+    "EIDPARRY",
+    "EIHOTEL",
+    "EPL",
+    "EICHERMOT",
+    "ELECON",
+    "ELGIEQUIP",
+    "EMAMILTD",
+    "ENDURANCE",
+    "ENGINERSIN",
+    "EQUITASBNK",
+    "ERIS",
+    "ESCORTS",
+    "EXIDEIND",
+    "FDC",
+    "FEDERALBNK",
+    "FACT",
+    "FINEORG",
+    "FINCABLES",
+    "FINPIPE",
+    "FSL",
+    "FORTIS",
+    "GAIL",
+    "GMRINFRA",
+    "GLENMARK",
+    "GODFRYPHLP",
+    "GODREJCP",
+    "GODREJIND",
+    "GODREJPROP",
+    "GRANULES",
+    "GRASIM",
+    "GRAVITA",
+    "GESHIP",
+    "GRINDWELL",
+    "GUJGASLTD",
+    "GNFC",
+    "GPPL",
+    "GSPL",
+    "HAVELLS",
+    "HCLTECH",
+    "HDFCAMC",
+    "HDFCBANK",
+    "HDFCLIFE",
+    "HEROMOTOCO",
+    "HFCL",
+    "HINDALCO",
+    "HINDCOPPER",
+    "HINDPETRO",
+    "HINDUNILVR",
+    "HINDZINC",
+    "HONAUT",
+    "HUDCO",
+    "ICICIBANK",
+    "ICICIGI",
+    "ICICIPRULI",
+    "IEX",
+    "INDIACEM",
+    "INDIAMART",
+    "INDIANB",
+    "INDHOTEL",
+    "IOC",
+    "IOB",
+    "IRCTC",
+    "IRFC",
+    "IREDA",
+    "IGL",
+    "INDUSINDBK",
+    "INDUSTOWER",
+    "INFY",
+    "INOXWIND",
+    "INTELLECT",
+    "INDIGO",
+    "IPCALAB",
+    "ITC",
+    "ITI",
+    "J&KBANK",
+    "JBCHEPHARM",
+    "JKCEMENT",
+    "JKLAKSHMI",
+    "JKPAPER",
+    "JMFINANCIL",
+    "JSWENERGY",
+    "JSWINFRA",
+    "JSWSTEEL",
+    "JSL",
+    "JUBLFOOD",
+    "JUBLINGREA",
+    "JUBLPHARMA",
+    "JUSTDIAL",
+    "JYOTHYLAB",
+    "KALYANKJIL",
+    "KANSAINER",
+    "KARURVYSYA",
+    "KEC",
+    "KEI",
+    "KFINTECH",
+    "KIRLOSENG",
+    "KOTAKBANK",
+    "KPITTECH",
+    "KPRMILL",
+    "KRBL",
+    "KSB",
+    "L&TFH",
+    "LT",
+    "LTIM",
+    "LTTS",
+    "LAURUSLABS",
+    "LICHSGFIN",
+    "LICI",
+    "LINDEINDIA",
+    "LUPIN",
+    "MMTC",
+    "MRF",
+    "MGL",
+    "MAHSCOOTER",
+    "MAHSEAMLES",
+    "M&MFIN",
+    "M&M",
+    "MANAPPURAM",
+    "MARICO",
+    "MARUTI",
+    "MASTEK",
+    "MAXHEALTH",
+    "MAZDOCK",
+    "MEDANTA",
+    "METROPOLIS",
+    "MFSL",
+    "MPHASIS",
+    "MRPL",
+    "MUTHOOTFIN",
+    "NATCOPHARM",
+    "NATIONALUM",
+    "NAVINFLUOR",
+    "NBCC",
+    "NCC",
+    "NHPC",
+    "NLCINDIA",
+    "NMDC",
+    "NTPC",
+    "NH",
+    "NATIONALUM",
+    "NAUKRI",
+    "NESCO",
+    "NETWORK18",
+    "NIPPON",
+    "OBEROIRLTY",
+    "OFSS",
+    "OIL",
+    "OLECTRA",
+    "PAYTM",
+    "PERSISTENT",
+    "PETRONET",
+    "PFC",
+    "PFIZER",
+    "PGHH",
+    "PHOENIXLTD",
+    "PIDILITIND",
+    "PIIND",
+    "PNB",
+    "POLICYBZR",
+    "POLYCAB",
+    "PPLPHARMA",
+    "PRESTIGE",
+    "RADICO",
+    "RVNL",
+    "RAILTEL",
+    "RAINBOW",
+    "RAJESHEXPO",
+    "RBLBANK",
+    "REC",
+    "RELIANCE",
+    "RITES",
+    "SAIL",
+    "SBICARD",
+    "SBILIFE",
+    "SBIN",
+    "SHREECEM",
+    "SHRIRAMFIN",
+    "SIEMENS",
+    "SJVN",
+    "SOBHA",
+    "SOLARINDS",
+    "SONACOMS",
+    "STARHEALTH",
+    "SUNPHARMA",
+    "SUNTV",
+    "SUNDARMFIN",
+    "SUZLON",
+    "SWANENERGY",
+    "TATACHEM",
+    "TATACOMM",
+    "TATACONSUM",
+    "TATAELXSI",
+    "TATAMOTORS",
+    "TATAPOWER",
+    "TATASTEEL",
+    "TATATECH",
+    "TCS",
+    "TECHM",
+    "TEJASNET",
+    "THERMAX",
+    "TIMKEN",
+    "TITAGARH",
+    "TITAN",
+    "TORNTPHARM",
+    "TORNTPOWER",
+    "TRENT",
+    "TRIDENT",
+    "TRITURBINE",
+    "TIINDIA",
+    "UCOBANK",
+    "UNOMINDA",
+    "UPL",
+    "UTIAMC",
+    "ULTRACEMCO",
+    "UNIONBANK",
+    "VGUARD",
+    "VMART",
+    "VIPIND",
+    "VOLTAS",
+    "WARBURTON",
+    "WELCORP",
+    "WELSPUNLIV",
+    "WESTLIFE",
+    "WHIRLPOOL",
+    "WIPRO",
+    "YESBANK",
+    "ZEEENT",
+    "ZENSARTECH",
+    "ZYDUSLIFE",
+    "ZYDUSWELL",
+]
 
 
 def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
@@ -46,136 +395,30 @@ def to_crores_str(val):
   return f"₹{cr:,.0f} Cr"
 
 
-def classify_market_cap(mcap_raw):
-  if not mcap_raw or mcap_raw <= 0:
-    return 0, "N/A", "Cap N/A"
-  mcap_cr = round(mcap_raw / 10000000, 1)
-  if mcap_cr >= 20000:
-    cap_type = "Large-Cap"
-  elif mcap_cr >= 5000:
-    cap_type = "Mid-Cap"
-  else:
-    cap_type = "Small-Cap"
-  return mcap_cr, f"₹{mcap_cr:,.0f} Cr", cap_type
-
-
-def parse_pl_table(df, fallback_rev=None, fallback_pat=None):
-  periods = []
-  if df is None or not isinstance(df, pd.DataFrame) or df.empty:
-    return periods
-
+def evaluate_fundamentals(ticker_obj, symbol: str, curr_price: float) -> dict:
+  info = {}
   try:
-    cols = list(df.columns)[:4]
+    info = ticker_obj.info or {}
+  except Exception:
+    pass
 
-    def get_best_row(preferred_keys):
-      for target in preferred_keys:
-        for idx in df.index:
-          s_clean = str(idx).strip().lower()
-          if s_clean == target.lower():
-            return idx
-      for target in preferred_keys:
-        for idx in df.index:
-          s_clean = str(idx).strip().lower()
-          if s_clean.startswith(target.lower()):
-            return idx
-      return None
-
-    rev_key = get_best_row([
-        "Total Revenue",
-        "Operating Revenue",
-        "TotalRevenue",
-        "Interest Income",
-    ])
-    op_key = get_best_row(
-        ["Operating Income", "EBITDA", "EBIT", "Total Operating Income"]
-    )
-    pat_key = get_best_row([
-        "Net Income Common Stockholders",
-        "Net Income",
-        "Net Income Continuous Operations",
-        "Diluted NI",
-    ])
-
-    for col in cols:
-      label = (
-          col.strftime("%b %Y")
-          if hasattr(col, "strftime")
-          else str(col)[:10]
-      )
-
-      rev_val = None
-      if rev_key is not None:
-        val = df.loc[rev_key, col]
-        rev_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
-
-      op_val = None
-      if op_key is not None:
-        val = df.loc[op_key, col]
-        op_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
-
-      pat_val = None
-      if pat_key is not None:
-        val = df.loc[pat_key, col]
-        pat_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
-
-      if rev_val is None and col == cols[0] and fallback_rev:
-        rev_val = fallback_rev
-      if pat_val is None and col == cols[0] and fallback_pat:
-        pat_val = fallback_pat
-
-      margin_str = "N/A"
-      try:
-        if (
-            rev_val is not None
-            and pat_val is not None
-            and not pd.isna(rev_val)
-            and not pd.isna(pat_val)
-        ):
-          r_f = float(rev_val)
-          p_f = float(pat_val)
-          if r_f > 0:
-            m_val = round((p_f / r_f) * 100, 1)
-            if -100 <= m_val <= 100:
-              margin_str = f"{m_val}%"
-      except Exception:
-        pass
-
-      periods.append({
-          "period": label,
-          "revenue": to_crores_str(rev_val),
-          "op_profit": to_crores_str(op_val),
-          "pat": to_crores_str(pat_val),
-          "margin": margin_str,
-          "raw_rev": rev_val,
-          "raw_pat": pat_val,
-      })
-  except Exception as e:
-    print(f"Error parsing financial table: {e}")
-
-  return periods
-
-
-def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
-  info = ticker_obj.info or {}
-
-  # Market Cap
   raw_mcap = info.get("marketCap")
   if not raw_mcap:
     try:
       raw_mcap = getattr(ticker_obj.fast_info, "market_cap", None)
     except Exception:
       raw_mcap = None
-  mcap_num, mcap_str, cap_category = classify_market_cap(raw_mcap)
 
-  # Multiples
+  mcap_cr = round(raw_mcap / 10000000, 1) if raw_mcap else 0
+  mcap_str = f"₹{mcap_cr:,.0f} Cr" if mcap_cr > 0 else "N/A"
+  cap_category = (
+      "Large-Cap"
+      if mcap_cr >= 20000
+      else ("Mid-Cap" if mcap_cr >= 5000 else "Small-Cap")
+  )
+
   pe = info.get("trailingPE")
   pe_val = round(pe, 1) if pe and pe > 0 else None
-
-  f_pe = info.get("forwardPE")
-  f_pe_val = round(f_pe, 1) if f_pe and f_pe > 0 else None
-
-  peg = info.get("pegRatio")
-  peg_val = round(peg, 2) if peg and peg > 0 else None
 
   pb = info.get("priceToBook")
   book_val = info.get("bookValue")
@@ -183,39 +426,25 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
     pb = curr_price / book_val
   pb_val = round(pb, 2) if pb and pb > 0 else None
 
-  # ROA
+  peg = info.get("pegRatio")
+  peg_val = round(peg, 2) if peg and peg > 0 else None
+
   roa = info.get("returnOnAssets")
   roa_val = round(roa * 100, 2) if roa is not None else None
 
-  # TTM Financials
   revenue = info.get("totalRevenue")
-  ebitda = info.get("ebitda") or info.get("operatingIncome")
   net_income = info.get("netIncomeToCommon")
-
-  # Balance Sheet Items
-  total_assets = info.get("totalAssets")
   total_debt = info.get("totalDebt")
-  total_cash = info.get("totalCash")
   shares_out = info.get("sharesOutstanding")
 
   total_equity = None
   if book_val and shares_out:
     total_equity = book_val * shares_out
 
-  if not total_assets and total_equity:
-    total_assets = total_equity + (total_debt or 0)
-
-  # ROE with Direct Calculation Fallback
   roe = info.get("returnOnEquity")
   roe_val = round(roe * 100, 1) if roe is not None else None
-
-  # Fallback: Derive ROE if yfinance returns None (e.g. RELIANCE.NS)
   if roe_val is None and net_income and total_equity and total_equity > 0:
     roe_val = round((net_income / total_equity) * 100, 1)
-
-  rev_str = to_crores_str(revenue)
-  op_str = to_crores_str(ebitda)
-  pat_str = to_crores_str(net_income)
 
   margin = info.get("profitMargins")
   if (margin is None) and revenue and net_income and revenue > 0:
@@ -223,309 +452,174 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
   pm_val = round(margin * 100, 1) if margin is not None else None
   margin_str = f"{pm_val}%" if pm_val is not None else "N/A"
 
-  # Multi-period P&L
-  annual_pl = []
-  quarterly_pl = []
-  try:
-    annual_pl = parse_pl_table(ticker_obj.financials, revenue, net_income)
-  except Exception:
-    pass
-
-  try:
-    quarterly_pl = parse_pl_table(ticker_obj.quarterly_financials)
-  except Exception:
-    pass
-
-  sales_3y_cagr = None
-  pat_3y_cagr = None
-  try:
-    if len(annual_pl) >= 3:
-      latest_r = annual_pl[0].get("raw_rev")
-      oldest_r = annual_pl[2].get("raw_rev")
-      if latest_r and oldest_r and float(oldest_r) > 0 and float(latest_r) > 0:
-        sales_3y_cagr = round(
-            (((float(latest_r) / float(oldest_r)) ** (1 / 2)) - 1) * 100, 1
-        )
-
-      latest_p = annual_pl[0].get("raw_pat")
-      oldest_p = annual_pl[2].get("raw_pat")
-      if latest_p and oldest_p and float(oldest_p) > 0 and float(latest_p) > 0:
-        pat_3y_cagr = round(
-            (((float(latest_p) / float(oldest_p)) ** (1 / 2)) - 1) * 100, 1
-        )
-  except Exception:
-    pass
-
-  assets_str = to_crores_str(total_assets)
-  equity_str = to_crores_str(total_equity)
-  debt_str = to_crores_str(total_debt) if total_debt else "₹0 Cr"
-  cash_str = to_crores_str(total_cash)
-
-  # Debt-to-Equity: Correct percentage conversion (e.g. 9.83% -> 0.10x)
   debt_to_eq = info.get("debtToEquity")
   de_val = None
   if debt_to_eq is not None:
     de_val = (
-        round(debt_to_eq / 100, 2)
-        if (debt_to_eq > 1.5 and symbol != "RELIANCE")
-        else round(debt_to_eq, 2)
+        round(debt_to_eq / 100, 2) if debt_to_eq > 1.5 else round(debt_to_eq, 2)
     )
   elif total_debt is not None and total_equity and total_equity > 0:
     de_val = round(total_debt / total_equity, 2)
 
-  op_inc = info.get("operatingIncome") or ebitda
-  int_exp = info.get("interestExpense")
-  int_cov = None
-  if op_inc and int_exp and float(int_exp) > 0:
-    int_cov = round(float(op_inc) / float(int_exp), 1)
-
-  for p in annual_pl:
-    p.pop("raw_rev", None)
-    p.pop("raw_pat", None)
-  for p in quarterly_pl:
-    p.pop("raw_rev", None)
-    p.pop("raw_pat", None)
-
   is_finance = symbol in FINANCIAL_STOCKS
   passed_rules = 0
-  total_rules = 0
-  checks = []
+  total_rules = 4
 
   if is_finance:
-    total_rules = 7
-
-    r1 = mcap_num >= 2000
-    checks.append(f"M.Cap > ₹2000Cr: {'✓' if r1 else '✗'}")
-    if r1:
-      passed_rules += 1
-
-    r2 = roa_val is not None and roa_val >= 1.2
-    checks.append(f"ROA > 1.2%: {'✓' if r2 else '✗'} ({roa_val}%)")
-    if r2:
-      passed_rules += 1
-
-    r3 = roe_val is not None and roe_val >= 13.0
-    checks.append(f"ROE > 13%: {'✓' if r3 else '✗'} ({roe_val}%)")
-    if r3:
-      passed_rules += 1
-
-    r4 = pb_val is not None and pb_val <= 2.5
-    checks.append(f"P/B < 2.5x: {'✓' if r4 else '✗'} ({pb_val}x)")
-    if r4:
-      passed_rules += 1
-
-    r5 = (sales_3y_cagr is not None and sales_3y_cagr >= 12.0) or (
-        info.get("revenueGrowth", 0) >= 0.10
-    )
-    checks.append(f"Sales Grw > 12%: {'✓' if r5 else '✗'}")
-    if r5:
-      passed_rules += 1
-
-    r6 = (pat_3y_cagr is not None and pat_3y_cagr >= 14.0) or (
-        info.get("earningsGrowth", 0) >= 0.12
-    )
-    checks.append(f"PAT Grw > 14%: {'✓' if r6 else '✗'}")
-    if r6:
-      passed_rules += 1
-
-    r7 = (peg_val is not None and peg_val <= 2.2) or (
-        pe_val is not None and pe_val <= 25
-    )
-    checks.append(f"Valuation OK: {'✓' if r7 else '✗'}")
-    if r7:
-      passed_rules += 1
-
-    fund_sound = passed_rules >= 5
     sector_type = "BANK/NBFC"
-    primary_label, primary_val = "ROA", f"{roa_val}%" if roa_val else "N/A"
-    secondary_label, secondary_val = "P/B", f"{pb_val}x" if pb_val else "N/A"
     de_str = "N/A (Bank)"
-
+    if roa_val is not None and roa_val >= 1.1:
+      passed_rules += 1
+    if roe_val is not None and roe_val >= 13.0:
+      passed_rules += 1
+    if pb_val is not None and pb_val <= 2.5:
+      passed_rules += 1
+    if pm_val is not None and pm_val >= 15.0:
+      passed_rules += 1
   else:
-    total_rules = 8
-
-    r1 = mcap_num >= 1000
-    checks.append(f"M.Cap > ₹1000Cr: {'✓' if r1 else '✗'}")
-    if r1:
-      passed_rules += 1
-
-    r2 = roe_val is not None and roe_val >= 14.0
-    checks.append(f"ROE/ROCE > 14%: {'✓' if r2 else '✗'} ({roe_val}%)")
-    if r2:
-      passed_rules += 1
-
-    r3 = (de_val is not None and de_val <= 0.5) or (total_debt == 0)
-    checks.append(f"D/E < 0.5: {'✓' if r3 else '✗'} ({de_val}x)")
-    if r3:
-      passed_rules += 1
-
-    r4 = (int_cov is not None and int_cov >= 4.0) or (
-        de_val is not None and de_val <= 0.1
-    )
-    checks.append(f"Int Cov > 4x: {'✓' if r4 else '✗'}")
-    if r4:
-      passed_rules += 1
-
-    r5 = (sales_3y_cagr is not None and sales_3y_cagr >= 10.0) or (
-        info.get("revenueGrowth", 0) >= 0.08
-    )
-    checks.append(f"Sales Grw > 10%: {'✓' if r5 else '✗'}")
-    if r5:
-      passed_rules += 1
-
-    r6 = (pat_3y_cagr is not None and pat_3y_cagr >= 12.0) or (
-        info.get("earningsGrowth", 0) >= 0.10
-    )
-    checks.append(f"PAT Grw > 12%: {'✓' if r6 else '✗'}")
-    if r6:
-      passed_rules += 1
-
-    r7 = pm_val is not None and pm_val >= 10.0
-    checks.append(f"Margin > 10%: {'✓' if r7 else '✗'} ({margin_str})")
-    if r7:
-      passed_rules += 1
-
-    r8 = (peg_val is not None and peg_val <= 2.2) or (
-        pe_val is not None and pe_val <= 42
-    )
-    checks.append(f"Valuation OK: {'✓' if r8 else '✗'}")
-    if r8:
-      passed_rules += 1
-
-    fund_sound = passed_rules >= 6
     sector_type = "CORPORATE"
-    de_str = f"{de_val}x" if de_val is not None else "N/A"
-    primary_label, primary_val = "D/E", de_str
-    secondary_label, secondary_val = "Margin", margin_str
-
-  score_str = f"{passed_rules}/{total_rules}"
+    de_str = f"{de_val}x" if de_val is not None else "0.00x"
+    if (de_val is not None and de_val <= 0.6) or (total_debt == 0):
+      passed_rules += 1
+    if roe_val is not None and roe_val >= 14.0:
+      passed_rules += 1
+    if pm_val is not None and pm_val >= 10.0:
+      passed_rules += 1
+    if (peg_val is not None and peg_val <= 2.2) or (
+        pe_val is not None and pe_val <= 42
+    ):
+      passed_rules += 1
 
   return {
       "mcap_str": mcap_str,
       "cap_category": cap_category,
       "sector_type": sector_type,
-      "screener_score": score_str,
-      "passed_rules": passed_rules,
-      "total_rules": total_rules,
-      "screener_passed": fund_sound,
-      "checks": checks,
       "pe": f"{pe_val}x" if pe_val else "N/A",
-      "forward_pe": f"{f_pe_val}x" if f_pe_val else "N/A",
       "peg": f"{peg_val}" if peg_val else "N/A",
       "pb": f"{pb_val}x" if pb_val else "N/A",
       "roe": f"{roe_val}%" if roe_val else "N/A",
       "roa": f"{roa_val}%" if roa_val else "N/A",
       "de": de_str,
-      "primary_label": primary_label,
-      "primary_val": primary_val,
-      "secondary_label": secondary_label,
-      "secondary_val": secondary_val,
-      "revenue": rev_str,
-      "op_profit": op_str,
-      "pat": pat_str,
+      "revenue": to_crores_str(revenue),
+      "pat": to_crores_str(net_income),
       "net_margin": margin_str,
-      "annual_pl": annual_pl,
-      "quarterly_pl": quarterly_pl,
-      "total_assets": assets_str,
-      "total_equity": equity_str,
-      "total_debt": debt_str,
-      "cash": cash_str,
+      "total_debt": to_crores_str(total_debt) if total_debt else "₹0 Cr",
+      "passed_rules": passed_rules,
   }
 
 
-def run_scan():
+def run_nifty500_scan():
   ist = pytz.timezone("Asia/Kolkata")
   timestamp_ist = datetime.now(ist).strftime("%Y-%m-%d %I:%M %p IST")
 
-  matches = []
+  symbols = [f"{s}.NS" for s in NIFTY_500_SYMBOLS]
+  total_symbols = len(symbols)
+  print(f"🚀 Starting fast-batch scan across Nifty 500 ({total_symbols} stocks)...")
+
+  chunk_size = 50
   all_data = []
+  matches = []
 
-  print(
-      f"Scanning {len(WATCHLIST)} symbols using Institutional Screener Rules..."
-  )
+  # Process in 50-stock chunks to download 1Y candles rapidly without hitting Yahoo rate limits
+  for i in range(0, total_symbols, chunk_size):
+    chunk = symbols[i : i + chunk_size]
+    print(
+        f"Downloading Technicals batch {i//chunk_size + 1}/{(total_symbols // chunk_size) + 1}..."
+    )
 
-  for ticker in WATCHLIST:
-    symbol = ticker.replace(".NS", "")
     try:
-      t = yf.Ticker(ticker)
-      df = t.history(period="1y", interval="1d", auto_adjust=True)
-      if df.empty or len(df) < 50:
+      data = yf.download(
+          chunk,
+          period="1y",
+          interval="1d",
+          auto_adjust=True,
+          group_by="ticker",
+          threads=True,
+          progress=False,
+      )
+    except Exception as e:
+      print(f"Batch download error: {e}")
+      continue
+
+    for full_ticker in chunk:
+      symbol = full_ticker.replace(".NS", "")
+      try:
+        if full_ticker not in data:
+          continue
+
+        df = data[full_ticker].dropna()
+        if df.empty or len(df) < 50:
+          continue
+
+        close = df["Close"]
+        high = df["High"]
+        volume = df["Volume"]
+
+        curr_price = float(close.iloc[-1])
+        curr_vol = float(volume.iloc[-1])
+        avg_vol_20 = float(volume.iloc[-21:-1].mean())
+        vol_multiplier = curr_vol / avg_vol_20 if avg_vol_20 > 0 else 0.0
+
+        ema_20 = float(close.ewm(span=20, adjust=False).mean().iloc[-1])
+        ema_50 = float(close.ewm(span=50, adjust=False).mean().iloc[-1])
+        rsi_val = float(calculate_rsi(close).iloc[-1])
+
+        high_52w = float(high.max())
+        pct_off_52w = ((high_52w - curr_price) / high_52w) * 100.0
+
+        above_mas = (curr_price > ema_20) and (curr_price > ema_50)
+        volume_surge = vol_multiplier >= 1.15
+        rsi_valid = 48.0 <= rsi_val <= 72.0
+        near_52w_high = pct_off_52w <= 15.0
+
+        tech_match = bool(
+            above_mas and volume_surge and rsi_valid and near_52w_high
+        )
+
+        # Pull fundamentals
+        t = yf.Ticker(full_ticker)
+        fund = evaluate_fundamentals(t, symbol, curr_price)
+
+        # Recommendation: BUY, WAIT, or SELL
+        if tech_match and fund["passed_rules"] >= 3:
+          conviction_tag = "BUY"
+          badge_type = "rec-buy"
+        elif fund["passed_rules"] >= 2:
+          conviction_tag = "WAIT"
+          badge_type = "rec-wait"
+        else:
+          conviction_tag = "SELL"
+          badge_type = "rec-sell"
+
+        stock_item = {
+            "symbol": symbol,
+            "price": round(curr_price, 2),
+            "high_52w": round(high_52w, 2),
+            "pct_off_52w": round(pct_off_52w, 1),
+            "vol_surge": round(vol_multiplier, 2),
+            "rsi": round(rsi_val, 1),
+            "tech_match": tech_match,
+            "conviction_tag": conviction_tag,
+            "badge_type": badge_type,
+            **fund,
+        }
+
+        all_data.append(stock_item)
+        if conviction_tag == "BUY":
+          matches.append(stock_item)
+
+      except Exception as e:
         continue
 
-      if isinstance(df.columns, pd.MultiIndex):
-        df.columns = [c[0] for c in df.columns]
+    time.sleep(0.5)
 
-      close = df["Close"]
-      high = df["High"]
-      volume = df["Volume"]
-
-      ema_20 = close.ewm(span=20, adjust=False).mean()
-      ema_50 = close.ewm(span=50, adjust=False).mean()
-      rsi_series = calculate_rsi(close)
-
-      curr_price = float(close.iloc[-1])
-      curr_vol = float(volume.iloc[-1])
-      avg_vol_20 = float(volume.iloc[-21:-1].mean())
-      curr_rsi = float(rsi_series.iloc[-1])
-      vol_multiplier = curr_vol / avg_vol_20 if avg_vol_20 > 0 else 0.0
-
-      high_52w = float(high.max())
-      pct_off_52w = ((high_52w - curr_price) / high_52w) * 100.0
-
-      above_mas = (curr_price > ema_20.iloc[-1]) and (
-          curr_price > ema_50.iloc[-1]
-      )
-      volume_surge = vol_multiplier >= 1.2
-      rsi_valid = 50.0 <= curr_rsi <= 70.0
-      near_52w_high = pct_off_52w <= 15.0
-      tech_match = bool(
-          above_mas and volume_surge and rsi_valid and near_52w_high
-      )
-
-      fund = evaluate_screener_rules(t, symbol, curr_price)
-
-      full_conviction = bool(tech_match and fund.get("screener_passed", False))
-
-      # Assign Conviction Tags
-      if full_conviction:
-        conviction_tag = "BUY"
-        badge_type = "rec-buy"
-      elif fund.get("screener_passed", False):
-        conviction_tag = "WAIT"
-        badge_type = "rec-wait"
-      else:
-        conviction_tag = "SELL"
-        badge_type = "rec-sell"
-
-      item = {
-          "symbol": symbol,
-          "price": round(curr_price, 2),
-          "high_52w": round(high_52w, 2),
-          "pct_off_52w": round(pct_off_52w, 1),
-          "vol_surge": round(vol_multiplier, 2),
-          "rsi": round(curr_rsi, 1),
-          "tech_match": tech_match,
-          "matched": full_conviction,
-          "conviction_tag": conviction_tag,
-          "badge_type": badge_type,
-          **fund,
-      }
-      all_data.append(item)
-      if full_conviction:
-        matches.append(item)
-
-      print(
-          f"[{conviction_tag:6}] {symbol:10} | ROE: {item['roe']:7} | D/E:"
-          f" {item['de']:6} | RSI: {curr_rsi:.1f}"
-      )
-
-    except Exception as e:
-      print(f"[!] Error on {symbol}: {e}")
-      continue
+  # Sort so that BUY setups appear first at the top of the dashboard, followed by WAIT, then SELL
+  sort_order = {"BUY": 0, "WAIT": 1, "SELL": 2}
+  all_data.sort(key=lambda x: sort_order.get(x["conviction_tag"], 3))
 
   payload = {
       "last_updated": timestamp_ist,
-      "total_scanned": len(WATCHLIST),
+      "total_scanned": len(all_data),
       "match_count": len(matches),
       "matches": matches,
       "all_scanned": all_data,
@@ -534,8 +628,11 @@ def run_scan():
   with open("results.json", "w") as f:
     json.dump(payload, f, indent=2)
 
-  print(f"\nScan completed at {timestamp_ist}. Total items: {len(all_data)}")
+  print(
+      f"\n✅ Scan finished at {timestamp_ist}. Scanned {len(all_data)} stocks."
+  )
+  print(f"🔥 Found {len(matches)} active BUY recommendations across Nifty 500!")
 
 
 if __name__ == "__main__":
-  run_scan()
+  run_nifty500_scan()
