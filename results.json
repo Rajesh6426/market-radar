@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-25 03:24 PM IST",
+  "last_updated": "2026-10-25 03:29 PM IST",
   "total_scanned": 19,
   "match_count": 0,
   "matches": [],
@@ -107,8 +107,8 @@
           "margin": "11.1%"
         }
       ],
-      "total_assets": "\u20b91,406,544 Cr",
-      "total_equity": "\u20b9904,030 Cr",
+      "total_assets": "N/A",
+      "total_equity": "N/A",
       "total_debt": "\u20b9502,514 Cr",
       "cash": "\u20b9258,880 Cr"
     },
@@ -215,8 +215,8 @@
           "margin": "15.9%"
         }
       ],
-      "total_assets": "\u20b9130,794 Cr",
-      "total_equity": "\u20b9118,986 Cr",
+      "total_assets": "N/A",
+      "total_equity": "N/A",
       "total_debt": "\u20b911,808 Cr",
       "cash": "\u20b951,024 Cr"
     },
@@ -253,14 +253,14 @@
       "peg": "2.08",
       "pb": "4.8x",
       "roe": "30.0%",
-      "roa": "14.76%",
+      "roa": "14.77%",
       "de": "8.57x",
       "primary_label": "D/E",
       "primary_val": "8.57x",
       "secondary_label": "Margin",
       "secondary_val": "16.2%",
       "revenue": "\u20b92,037 Cr",
-      "op_profit": "\u20b9460 Cr",
+      "op_profit": "\u20b9451 Cr",
       "pat": "\u20b9330 Cr",
       "net_margin": "16.2%",
       "annual_pl": [
@@ -449,7 +449,7 @@
         "Valuation OK: \u2713"
       ],
       "pe": "17.1x",
-      "forward_pe": "14.3x",
+      "forward_pe": "14.2x",
       "peg": "0.53",
       "pb": "2.56x",
       "roe": "16.5%",
@@ -556,7 +556,7 @@
         "Margin > 10%: \u2713 (13.1%)",
         "Valuation OK: \u2713"
       ],
-      "pe": "39.5x",
+      "pe": "39.6x",
       "forward_pe": "23.0x",
       "peg": "N/A",
       "pb": "7.29x",
@@ -1151,8 +1151,8 @@
           "period": "Mar 2026",
           "revenue": "\u20b917,629 Cr",
           "op_profit": "\u20b96,502 Cr",
-          "pat": "\u20b95,388 Cr",
-          "margin": "30.6%"
+          "pat": "N/A",
+          "margin": "N/A"
         },
         {
           "period": "Dec 2025",
@@ -1417,8 +1417,8 @@
         "PAT Grw > 14%: \u2713",
         "Valuation OK: \u2717"
       ],
-      "pe": "26.7x",
-      "forward_pe": "18.5x",
+      "pe": "26.2x",
+      "forward_pe": "18.4x",
       "peg": "N/A",
       "pb": "4.69x",
       "roe": "19.0%",
@@ -1508,7 +1508,7 @@
       "matched": false,
       "conviction_tag": "NEUTRAL",
       "badge_type": "badge-neutral",
-      "mcap_str": "\u20b916,139 Cr",
+      "mcap_str": "\u20b916,147 Cr",
       "cap_category": "Mid-Cap",
       "sector_type": "CORPORATE",
       "screener_score": "5/8",
@@ -1600,7 +1600,7 @@
           "margin": "N/A"
         }
       ],
-      "total_assets": "\u20b91,387 Cr",
+      "total_assets": "\u20b91,388 Cr",
       "total_equity": "\u20b91,323 Cr",
       "total_debt": "\u20b964 Cr",
       "cash": "\u20b9852 Cr"
@@ -1625,29 +1625,29 @@
       "screener_passed": false,
       "checks": [
         "M.Cap > \u20b91000Cr: \u2713",
-        "ROE/ROCE > 15%: \u2717 (None%)",
-        "D/E < 0.5: \u2717 (9.07x)",
+        "ROE/ROCE > 15%: \u2717 (13.5%)",
+        "D/E < 0.5: \u2717 (2.94x)",
         "Int Cov > 4x: \u2717",
         "Sales Grw > 10%: \u2713",
         "PAT Grw > 12%: \u2717",
-        "Margin > 10%: \u2713 (39.1%)",
+        "Margin > 10%: \u2713 (38.2%)",
         "Valuation OK: \u2713"
       ],
       "pe": "17.2x",
       "forward_pe": "18.4x",
       "peg": "N/A",
       "pb": "2.31x",
-      "roe": "N/A",
-      "roa": "N/A",
-      "de": "9.07x",
+      "roe": "13.5%",
+      "roa": "9.7%",
+      "de": "2.94x",
       "primary_label": "D/E",
-      "primary_val": "9.07x",
+      "primary_val": "2.94x",
       "secondary_label": "Margin",
-      "secondary_val": "39.1%",
-      "revenue": "\u20b91,064 Cr",
-      "op_profit": "\u20b9599 Cr",
-      "pat": "\u20b9417 Cr",
-      "net_margin": "39.1%",
+      "secondary_val": "38.2%",
+      "revenue": "\u20b91,054 Cr",
+      "op_profit": "\u20b9592 Cr",
+      "pat": "\u20b9403 Cr",
+      "net_margin": "38.2%",
       "annual_pl": [
         {
           "period": "Mar 2026",
@@ -1708,10 +1708,10 @@
           "margin": "49.7%"
         }
       ],
-      "total_assets": "\u20b93,268 Cr",
+      "total_assets": "\u20b93,089 Cr",
       "total_equity": "\u20b92,996 Cr",
-      "total_debt": "\u20b9272 Cr",
-      "cash": "\u20b9289 Cr"
+      "total_debt": "\u20b993 Cr",
+      "cash": "\u20b938 Cr"
     },
     {
       "symbol": "CLEAN",
@@ -1850,7 +1850,7 @@
         "Valuation OK: \u2713"
       ],
       "pe": "40.8x",
-      "forward_pe": "18.8x",
+      "forward_pe": "N/A",
       "peg": "N/A",
       "pb": "2.99x",
       "roe": "N/A",
