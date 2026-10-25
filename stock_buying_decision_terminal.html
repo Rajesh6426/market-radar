@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Automated Stock Decision Terminal</title>
+  <title>Stock Decision Terminal | Buy, Wait or Sell</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,174 +24,74 @@
               800: '#141b2d',
               750: '#1c2438',
               700: '#232d46',
-              600: '#334155',
             }
           }
         }
       }
     }
   </script>
-  <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    @media print {
-      body { background: white !important; color: black !important; }
-      .no-print { display: none !important; }
-      .card-box { border: 1px solid #ddd !important; background: white !important; color: black !important; page-break-inside: avoid; }
-    }
-  </style>
 </head>
 <body class="bg-dark-900 text-slate-100 font-sans min-h-screen antialiased selection:bg-emerald-500 selection:text-white">
 
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
 
-    <!-- Clean Header -->
-    <header class="flex items-center justify-between border-b border-slate-800/80 pb-5 no-print">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 ring-1 ring-white/20">
-          <svg class="w-6 h-6 text-slate-950 font-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Stock Decision Terminal</h1>
-            <span class="text-xs px-2 py-0.5 rounded-full font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">AUTOMATED</span>
-          </div>
-          <p class="text-xs text-slate-400">Institutional Fundamental & Technical Pre-Trade Audit</p>
-        </div>
-      </div>
-
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-4 border-b border-slate-800">
       <div class="flex items-center gap-3">
-        <a href="index.html" class="text-xs font-semibold px-3 py-2 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700/80 text-slate-200 transition-all">
-          ← Radar Matrix
+        <a href="index.html" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700 text-slate-300 transition-all">
+          ← Back to Radar
         </a>
-        <button onclick="window.print()" class="text-xs font-semibold px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md">
-          Print / PDF
-        </button>
+        <h1 class="text-xl font-bold text-white font-mono">PRE-TRADE AUDIT</h1>
       </div>
-    </header>
-
-    <!-- Top Summary & Verdict Card -->
-    <section class="bg-dark-850 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden card-box">
-      <div id="verdictGlow" class="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
-        <div>
-          <div class="flex items-center gap-3">
-            <h2 id="stockTitle" class="text-3xl font-black text-white uppercase font-mono tracking-tight">--</h2>
-            <span id="sectorBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-dark-750 text-slate-300 border border-slate-700">CORPORATE</span>
-            <span id="mcapBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-dark-750 text-slate-300 border border-slate-700">Large-Cap</span>
-          </div>
-          <p id="companyMeta" class="text-xs text-slate-400 mt-1.5 font-mono">Loading cloud scan metrics...</p>
-        </div>
-
-        <div class="flex items-center gap-4">
-          <div class="text-right">
-            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">System Recommendation</span>
-            <div id="recommendationBadge" class="text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-dark-750 text-slate-300 border-slate-700">
-              ANALYZING
-            </div>
-          </div>
-          <div class="w-16 h-16 rounded-2xl bg-dark-800 border border-slate-700 flex flex-col items-center justify-center font-mono">
-            <span id="scoreText" class="text-lg font-black text-white">0%</span>
-            <span class="text-[9px] uppercase font-bold text-slate-400">Score</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Trade Geometry -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-        <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Entry (CMP)</span>
-          <span id="cmpVal" class="text-lg font-bold font-mono text-white mt-1 block">₹0.00</span>
-          <span class="text-[10px] text-slate-500 font-mono">Live Scanned Price</span>
-        </div>
-        <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider block">Target Price</span>
-          <span id="targetVal" class="text-lg font-bold font-mono text-emerald-400 mt-1 block">₹0.00</span>
-          <span id="upsideVal" class="text-[10px] text-emerald-500 font-mono">--</span>
-        </div>
-        <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[10px] font-semibold text-rose-400 uppercase tracking-wider block">Stop Loss (-6%)</span>
-          <span id="slVal" class="text-lg font-bold font-mono text-rose-400 mt-1 block">₹0.00</span>
-          <span class="text-[10px] text-rose-500 font-mono">-6.0% Risk Buffer</span>
-        </div>
-        <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider block">Risk : Reward</span>
-          <span id="rrRatioVal" class="text-lg font-black font-mono text-cyan-400 mt-1 block">--</span>
-          <span class="text-[10px] text-cyan-500 font-mono">Target R:R ≥ 1:2.5</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Automated 4-Module Checklist -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="checklistContainer">
-
-      <!-- Module A -->
-      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-          <div class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-xs flex items-center justify-center font-mono">A</span>
-            <h3 id="moduleATitle" class="text-xs font-bold text-white uppercase tracking-wider">Solvency & Capital Safety</h3>
-          </div>
-          <span id="scoreA" class="text-xs font-mono font-bold text-slate-400">0/4</span>
-        </div>
-        <div class="space-y-2.5" id="itemsA"></div>
-      </section>
-
-      <!-- Module B -->
-      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-          <div class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs flex items-center justify-center font-mono">B</span>
-            <h3 id="moduleBTitle" class="text-xs font-bold text-white uppercase tracking-wider">Profitability & Return RoE/RoCE</h3>
-          </div>
-          <span id="scoreB" class="text-xs font-mono font-bold text-slate-400">0/4</span>
-        </div>
-        <div class="space-y-2.5" id="itemsB"></div>
-      </section>
-
-      <!-- Module C -->
-      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-          <div class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs flex items-center justify-center font-mono">C</span>
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Valuation & Growth Soundness</h3>
-          </div>
-          <span id="scoreC" class="text-xs font-mono font-bold text-slate-400">0/4</span>
-        </div>
-        <div class="space-y-2.5" id="itemsC"></div>
-      </section>
-
-      <!-- Module D -->
-      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-          <div class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs flex items-center justify-center font-mono">D</span>
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Technical Posture & Momentum</h3>
-          </div>
-          <span id="scoreD" class="text-xs font-mono font-bold text-slate-400">0/4</span>
-        </div>
-        <div class="space-y-2.5" id="itemsD"></div>
-      </section>
-
+      <button onclick="window.print()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700 text-slate-300">
+        Print / PDF
+      </button>
     </div>
 
-    <!-- Execution Thesis Banner -->
-    <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
-      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2 mb-2">
-        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        Automated Institutional Decision Note
-      </h3>
-      <p id="decisionMemo" class="text-xs leading-relaxed text-slate-300 bg-dark-800 p-4 rounded-xl border border-slate-700/60 font-mono">
-        Loading decision thesis...
-      </p>
-    </section>
+    <!-- Main Verdict Card -->
+    <div class="bg-dark-850 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-3">
+          <h2 id="stockTitle" class="text-3xl font-black text-white font-mono uppercase tracking-tight">--</h2>
+          <span id="sectorBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-dark-750 text-slate-300 border border-slate-700">CORPORATE</span>
+        </div>
+        <p id="companyMeta" class="text-xs text-slate-400 mt-1.5 font-mono">Loading data...</p>
+      </div>
+
+      <div class="text-right sm:text-right">
+        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Decision</span>
+        <div id="verdictBox" class="inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono border">
+          ANALYZING...
+        </div>
+      </div>
+    </div>
+
+    <!-- Trade Execution Levels -->
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-dark-850 p-3.5 rounded-xl border border-slate-800">
+        <span class="text-[10px] uppercase font-bold text-slate-400 block">Entry (CMP)</span>
+        <span id="cmpVal" class="text-base font-bold font-mono text-white mt-0.5 block">₹0.00</span>
+      </div>
+      <div class="bg-dark-850 p-3.5 rounded-xl border border-slate-800">
+        <span class="text-[10px] uppercase font-bold text-emerald-400 block">Target (+20% / 52W)</span>
+        <span id="targetVal" class="text-base font-bold font-mono text-emerald-400 mt-0.5 block">₹0.00</span>
+      </div>
+      <div class="bg-dark-850 p-3.5 rounded-xl border border-slate-800">
+        <span class="text-[10px] uppercase font-bold text-rose-400 block">Stop Loss (-6%)</span>
+        <span id="slVal" class="text-base font-bold font-mono text-rose-400 mt-0.5 block">₹0.00</span>
+      </div>
+    </div>
+
+    <!-- The 8-Point Institutional Checklist -->
+    <div class="bg-dark-850 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+        <h3 class="text-xs font-bold text-white uppercase tracking-wider font-mono">Automated Decision Checklist</h3>
+        <span id="scoreBadge" class="text-xs font-mono font-bold text-slate-400">0 / 8 Passed</span>
+      </div>
+      <div id="checklistItems" class="space-y-2.5">
+        <!-- Checklist rendered dynamically -->
+      </div>
+    </div>
 
   </div>
 
@@ -204,35 +104,34 @@
       return isNaN(parsed) ? null : parsed;
     }
 
-    function renderItemRow(label, pass, valText) {
+    function rowHtml(title, pass, metricText) {
       return `
-        <div class="p-3 rounded-xl border flex items-center justify-between gap-3 ${pass ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-dark-800/80 border-slate-800'}">
+        <div class="p-3 rounded-xl border flex items-center justify-between gap-3 ${pass ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-dark-800 border-slate-800'}">
           <div>
-            <div class="text-xs font-semibold ${pass ? 'text-emerald-300' : 'text-slate-200'}">${label}</div>
-            <div class="text-[11px] font-mono text-cyan-400 mt-0.5">${valText}</div>
+            <div class="text-xs font-semibold ${pass ? 'text-emerald-300' : 'text-slate-200'}">${title}</div>
+            <div class="text-[11px] font-mono text-cyan-400 mt-0.5">${metricText}</div>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded font-mono font-bold shrink-0 ${pass ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+          <span class="text-[10px] px-2.5 py-0.5 rounded font-mono font-bold shrink-0 ${pass ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'}">
             ${pass ? 'PASS ✓' : 'FAIL ✗'}
           </span>
         </div>
       `;
     }
 
-    async function initAutomatedTerminal() {
+    async function loadStockChecklist() {
       try {
         const res = await fetch('results.json?v=' + new Date().getTime());
         const data = await res.json();
-        const watchlist = data.all_scanned || [];
+        const list = data.all_scanned || [];
 
         const params = new URLSearchParams(window.location.search);
         const urlSymbol = (params.get('symbol') || 'TCS').toUpperCase();
-
-        const stock = watchlist.find(s => s.symbol.toUpperCase() === urlSymbol) || watchlist[0];
+        const stock = list.find(s => s.symbol.toUpperCase() === urlSymbol) || list[0];
         if (!stock) return;
 
         const isBank = (stock.sector_type === 'BANK/NBFC' || stock.sector_type === 'BANK');
         
-        // Correct D/E scaling if raw percentage was stored
+        // Clean D/E
         let deVal = parseNum(stock.de);
         if (deVal !== null && deVal > 1.5 && stock.symbol !== 'RELIANCE') {
           deVal = parseFloat((deVal / 100).toFixed(2));
@@ -252,124 +151,64 @@
         const target = Math.max(high52, Math.round(cmp * 1.18));
         const sl = Math.round(cmp * 0.94);
 
-        const upside = cmp > 0 ? (((target - cmp) / cmp) * 100).toFixed(1) : 0;
-        const rr = (cmp - sl) > 0 ? ((target - cmp) / (cmp - sl)).toFixed(2) : "N/A";
-
-        // Fill Metadata
+        // Populate Meta & Levels
         document.getElementById('stockTitle').textContent = stock.symbol;
         document.getElementById('sectorBadge').textContent = stock.sector_type || 'CORPORATE';
-        document.getElementById('mcapBadge').textContent = stock.cap_category || 'Large-Cap';
-        document.getElementById('companyMeta').textContent = `M.Cap: ${stock.mcap_str || 'N/A'} | 52W High: ₹${high52} | Current RSI: ${stock.rsi}`;
+        document.getElementById('companyMeta').textContent = `M.Cap: ${stock.mcap_str || 'N/A'} | 52W High: ₹${high52}`;
 
-        // Fill Execution Pricing
         document.getElementById('cmpVal').textContent = `₹${cmp.toLocaleString('en-IN')}`;
         document.getElementById('targetVal').textContent = `₹${target.toLocaleString('en-IN')}`;
         document.getElementById('slVal').textContent = `₹${sl.toLocaleString('en-IN')}`;
-        document.getElementById('upsideVal').textContent = `+${upside}% Upside`;
-        document.getElementById('rrRatioVal').textContent = `1 : ${rr}`;
 
-        // Module Evaluation
-        let modA = [], modB = [], modC = [], modD = [];
-
+        // 8 Core Checklist Items
+        let items = [];
         if (isBank) {
-          document.getElementById('moduleATitle').textContent = "Asset Quality & Capital Adequacy";
-          document.getElementById('moduleBTitle').textContent = "Lending Margins & Bank Efficiency";
-
-          modA = [
-            { label: "Return on Assets (ROA) ≥ 1.2%", pass: roa !== null && roa >= 1.2, val: `ROA: ${stock.roa || 'N/A'}` },
-            { label: "Return on Equity (ROE) ≥ 13%", pass: roe !== null && roe >= 13.0, val: `ROE: ${stock.roe || 'N/A'}` },
-            { label: "Price-to-Book (P/B) ≤ 2.5x", pass: pb !== null && pb <= 2.5, val: `P/B: ${stock.pb || 'N/A'}` },
-            { label: "Capital Adequacy & Scale", pass: (stock.cap_category === 'Large-Cap' || stock.cap_category === 'Mid-Cap'), val: `M.Cap: ${stock.mcap_str || 'N/A'}` }
-          ];
-
-          modB = [
-            { label: "Operating / Net Margin ≥ 15%", pass: margin !== null && margin >= 15.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
-            { label: "Balance-Sheet Spread Quality", pass: roa !== null && roa >= 1.0, val: `ROA: ${stock.roa || 'N/A'}` },
-            { label: "Valuation Sanity (P/E ≤ 25x)", pass: pe !== null && pe <= 25.0, val: `P/E: ${stock.pe || 'N/A'}` },
-            { label: "Core Screener Rules Passed", pass: Boolean(stock.screener_passed), val: `Score: ${stock.screener_score || 'N/A'}` }
+          items = [
+            { label: "1. Asset Quality (ROA ≥ 1.1%)", pass: roa !== null && roa >= 1.1, val: `ROA: ${stock.roa || 'N/A'}` },
+            { label: "2. Capital Compounding (ROE ≥ 13%)", pass: roe !== null && roe >= 13.0, val: `ROE: ${stock.roe || 'N/A'}` },
+            { label: "3. Valuation Multiple (P/B ≤ 2.5x)", pass: pb !== null && pb <= 2.5, val: `P/B: ${stock.pb || 'N/A'}` },
+            { label: "4. Operating Margin Cushion", pass: margin !== null && margin >= 15.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
+            { label: "5. Earnings Growth (P/E OK)", pass: pe !== null && pe <= 30.0, val: `P/E: ${stock.pe || 'N/A'}` },
+            { label: "6. Proximity to 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off High: -${stock.pct_off_52w}%` },
+            { label: "7. Moving Average Trend (Above 20 & 50 EMA)", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment" : "Consolidating" },
+            { label: "8. RSI Momentum in Healthy Zone (48 - 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` }
           ];
         } else {
-          document.getElementById('moduleATitle').textContent = "Financial Health & Solvency";
-          document.getElementById('moduleBTitle').textContent = "Profitability, Efficiency & Moat";
-
-          modA = [
-            { label: "Debt-to-Equity ≤ 0.5x", pass: deVal !== null ? deVal <= 0.5 : true, val: `D/E: ${deVal !== null ? deVal + 'x' : '0.00x (Debt Free)'}` },
-            { label: "Solvency Cushion & Debt Size", pass: deVal !== null ? deVal <= 0.8 : true, val: `Total Debt: ${stock.total_debt || '₹0 Cr'}` },
-            { label: "Liquidity & Scale Stability", pass: (stock.cap_category === 'Large-Cap' || stock.cap_category === 'Mid-Cap'), val: `M.Cap: ${stock.mcap_str || 'N/A'}` },
-            { label: "Promoter Share Pledging < 5%", pass: true, val: "Promoter Pledging: < 5% (Safe)" }
-          ];
-
-          modB = [
-            { label: "ROCE / Capital Compounding ≥ 15%", pass: roe !== null && roe >= 15.0, val: `ROE/ROCE: ${stock.roe || 'N/A'}` },
-            { label: "Return on Net Worth (ROE) ≥ 14%", pass: roe !== null && roe >= 14.0, val: `ROE: ${stock.roe || 'N/A'}` },
-            { label: "Net Operating Margin ≥ 10%", pass: margin !== null && margin >= 10.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
-            { label: "Consistent Net Profit (PAT)", pass: stock.pat !== 'N/A', val: `PAT: ${stock.pat || 'N/A'}` }
+          items = [
+            { label: "1. Debt-to-Equity Balance Sheet Safety (≤ 0.5x)", pass: deVal !== null ? deVal <= 0.5 : true, val: `D/E: ${deVal !== null ? deVal + 'x' : '0.00x (Debt-Free)'}` },
+            { label: "2. High Return on Equity (ROE ≥ 14%)", pass: roe !== null && roe >= 14.0, val: `ROE: ${stock.roe || 'N/A'}` },
+            { label: "3. Net Profit Margin Strength (≥ 10%)", pass: margin !== null && margin >= 10.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
+            { label: "4. Solvency Cushion (Low Long-Term Debt)", pass: deVal !== null ? deVal <= 0.8 : true, val: `Total Debt: ${stock.total_debt || '₹0 Cr'}` },
+            { label: "5. Valuation Sanity (PEG ≤ 2.2 / P/E ≤ 42x)", pass: (peg !== null ? peg <= 2.2 : (pe !== null && pe <= 42)), val: `P/E: ${stock.pe || 'N/A'} | PEG: ${stock.peg || 'N/A'}` },
+            { label: "6. Proximity to 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off High: -${stock.pct_off_52w}%` },
+            { label: "7. Moving Average Trend (Above 20 & 50 EMA)", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment" : "Consolidating" },
+            { label: "8. RSI Momentum in Healthy Zone (48 - 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` }
           ];
         }
 
-        modC = [
-          { label: "Top-Line Revenue Scale", pass: stock.revenue !== 'N/A', val: `Revenue: ${stock.revenue || 'N/A'}` },
-          { label: "Bottom-Line Generation", pass: stock.pat !== 'N/A', val: `PAT: ${stock.pat || 'N/A'}` },
-          { label: "Growth-to-Price (PEG ≤ 2.2 / P/E OK)", pass: (peg !== null ? peg <= 2.2 : (pe !== null && pe <= 42)), val: `P/E: ${stock.pe || 'N/A'} | PEG: ${stock.peg || 'N/A'}` },
-          { label: "Institutional Holding & Quality", pass: Boolean(stock.screener_passed), val: `Screener Score: ${stock.screener_score || 'N/A'}` }
-        ];
+        const passedCount = items.filter(i => i.pass).length;
+        document.getElementById('checklistItems').innerHTML = items.map(i => rowHtml(i.label, i.pass, i.val)).join('');
+        document.getElementById('scoreBadge').textContent = `${passedCount} / ${items.length} Passed`;
 
-        modD = [
-          { label: "Stage 2 Trend: Price > 20 & 50 EMA", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment (Above EMAs)" : "Pullback / Consolidating" },
-          { label: "RSI Momentum Healthy (48 to 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` },
-          { label: "Volume Expansion Surge (≥ 1.15x)", pass: vol !== null && vol >= 1.15, val: `Volume: ${stock.vol_surge}x Avg` },
-          { label: "Near 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off 52W: -${stock.pct_off_52w}%` }
-        ];
-
-        // Render HTML
-        document.getElementById('itemsA').innerHTML = modA.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
-        document.getElementById('itemsB').innerHTML = modB.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
-        document.getElementById('itemsC').innerHTML = modC.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
-        document.getElementById('itemsD').innerHTML = modD.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
-
-        // Subscores
-        const countA = modA.filter(i => i.pass).length;
-        const countB = modB.filter(i => i.pass).length;
-        const countC = modC.filter(i => i.pass).length;
-        const countD = modD.filter(i => i.pass).length;
-
-        document.getElementById('scoreA').textContent = `${countA}/${modA.length}`;
-        document.getElementById('scoreB').textContent = `${countB}/${modB.length}`;
-        document.getElementById('scoreC').textContent = `${countC}/${modC.length}`;
-        document.getElementById('scoreD').textContent = `${countD}/${modD.length}`;
-
-        const totalPassed = countA + countB + countC + countD;
-        const percent = Math.round((totalPassed / 16) * 100);
-        document.getElementById('scoreText').textContent = `${percent}%`;
-
-        // Recommendation Verdict
-        const recBadge = document.getElementById('recommendationBadge');
-        const glow = document.getElementById('verdictGlow');
-        const memo = document.getElementById('decisionMemo');
-
-        if (percent >= 85 && stock.tech_match) {
-          recBadge.className = "text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-emerald-500/15 text-emerald-300 border-emerald-500/40";
-          recBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span> STRONG BUY 🟢';
-          glow.className = "absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none";
-          memo.textContent = `[STRONG BUY CONVICTION] ${stock.symbol} cleared ${totalPassed}/16 automated rules (${percent}%). High capital productivity (ROE ${stock.roe}) paired with active technical momentum above key moving averages. Position sizing can be full-weight with stop loss anchored at ₹${sl}.`;
-        } else if (percent >= 70) {
-          recBadge.className = "text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-yellow-500/15 text-yellow-300 border-yellow-500/40";
-          recBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span> ACCUMULATE ON DIPS 🟡';
-          glow.className = "absolute -right-20 -top-20 w-80 h-80 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none";
-          memo.textContent = `[ACCUMULATE ON DIPS] ${stock.symbol} passed ${totalPassed}/16 rules (${percent}%). Robust balance sheet and quality compounding metrics confirmed, but short-term momentum is in a consolidation or pullback phase. Best deployed in tranches rather than lump-sum breakout chase.`;
+        // Strictly BUY, WAIT, or SELL
+        const verdictBox = document.getElementById('verdictBox');
+        if (passedCount >= 7 && stock.tech_match) {
+          verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+          verdictBox.innerHTML = '🟢 BUY';
+        } else if (passedCount >= 5) {
+          verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-yellow-500/20 text-yellow-300 border border-yellow-500/40";
+          verdictBox.innerHTML = '🟡 WAIT';
         } else {
-          recBadge.className = "text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-amber-500/15 text-amber-300 border-amber-500/40";
-          recBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> HOLD / WATCHLIST 🟠';
-          glow.className = "absolute -right-20 -top-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none";
-          memo.textContent = `[HOLD / WATCHLIST] ${stock.symbol} passed ${totalPassed}/16 rules (${percent}%). Neutral posture. Wait for moving average alignment and volume confirmation before committing fresh capital.`;
+          verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-rose-500/20 text-rose-300 border border-rose-500/40";
+          verdictBox.innerHTML = '🔴 SELL';
         }
 
-      } catch (e) {
-        console.error("Error evaluating terminal:", e);
+      } catch (err) {
+        console.error(err);
       }
     }
 
-    window.addEventListener('DOMContentLoaded', initAutomatedTerminal);
+    window.addEventListener('DOMContentLoaded', loadStockChecklist);
   </script>
 </body>
 </html>

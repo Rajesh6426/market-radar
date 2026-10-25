@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Institutional Stock Radar</title>
+  <title>Stock Decision Radar | Buy, Wait or Sell</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -11,8 +11,9 @@
       --border: #30363d;
       --text: #c9d1d9;
       --text-white: #f0f6fc;
-      --tag-green: #2ea043;
-      --tag-neutral: #8b949e;
+      --green: #2ea043;
+      --yellow: #d29922;
+      --red: #f85149;
       --link: #58a6ff;
     }
     body {
@@ -20,146 +21,97 @@
       background-color: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: 24px;
     }
     .container {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
     }
     header {
       border-bottom: 1px solid var(--border);
       padding-bottom: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
     }
     h1 {
       color: var(--text-white);
-      margin: 0 0 6px 0;
-      font-size: 24px;
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .timestamp {
-      font-size: 13px;
-      color: #8b949e;
-    }
-    .nav-tabs {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 12px;
-      overflow-x: auto;
-    }
-    .tab-btn {
-      background: #21262d;
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .tab-btn:hover { background: #30363d; }
-    .tab-btn.active {
-      background: #1f6feb;
-      color: #fff;
-      border-color: #388bfd;
-    }
-    .toggle-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .toggle-btn {
-      background: #161b22;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 5px 12px;
-      border-radius: 14px;
       font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .toggle-btn.active {
-      background: #238636;
-      color: #fff;
-      border-color: #2ea043;
+      color: #8b949e;
+      font-family: monospace;
     }
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 20px;
-      margin-bottom: 20px;
       overflow-x: auto;
-    }
-    h2 {
-      color: var(--text-white);
-      font-size: 17px;
-      margin-top: 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
     }
     th, td {
       text-align: left;
-      padding: 12px 10px;
+      padding: 14px 12px;
       border-bottom: 1px solid var(--border);
       font-size: 13px;
     }
     th {
       color: #8b949e;
       font-weight: 600;
-      font-size: 11.5px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
     a.symbol-link {
-      color: var(--link);
+      color: var(--text-white);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    a.symbol-link:hover {
+      color: var(--link);
+      text-decoration: underline;
+    }
+    .btn-checklist {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #21262d;
+      color: #58a6ff;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.2s;
     }
-    a.symbol-link:hover { text-decoration: underline; }
+    .btn-checklist:hover {
+      background: #30363d;
+      border-color: #58a6ff;
+    }
     .subtext {
       font-size: 11px;
       color: #8b949e;
+      margin-top: 2px;
     }
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .badge-match {
-      background: rgba(46, 160, 67, 0.2);
-      color: #3fb950;
-      border: 1px solid rgba(46, 160, 67, 0.4);
-    }
-    .badge-fund-good {
-      background: rgba(56, 139, 253, 0.15);
-      color: #58a6ff;
-      border: 1px solid rgba(56, 139, 253, 0.3);
-    }
-    .badge-momentum {
-      background: rgba(227, 179, 65, 0.15);
-      color: #e3b341;
-      border: 1px solid rgba(227, 179, 65, 0.3);
-    }
-    .badge-neutral {
-      background: rgba(139, 148, 158, 0.15);
-      color: #8b949e;
-    }
-    .cap-badge {
+    .tag-badge {
       font-size: 10px;
       padding: 2px 6px;
       border-radius: 4px;
@@ -167,234 +119,242 @@
       color: #8b949e;
       border: 1px solid var(--border);
     }
-    .score-badge {
-      font-size: 11px;
+    .score-pill {
+      display: inline-block;
       font-weight: 700;
+      font-family: monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .score-high {
+      background: rgba(46, 160, 67, 0.15);
       color: #3fb950;
-      background: rgba(46, 160, 67, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(46, 160, 67, 0.2);
+      border: 1px solid rgba(46, 160, 67, 0.3);
     }
-    .score-badge.warn {
-      color: #8b949e;
-      background: #21262d;
-      border: 1px solid var(--border);
+    .score-mid {
+      background: rgba(210, 153, 34, 0.15);
+      color: #d29922;
+      border: 1px solid rgba(210, 153, 34, 0.3);
     }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .score-low {
+      background: rgba(248, 81, 73, 0.15);
+      color: #f85149;
+      border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+    /* Strictly BUY, WAIT, SELL Badges */
+    .rec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: monospace;
+    }
+    .rec-buy {
+      background: rgba(46, 160, 67, 0.2);
+      color: #3fb950;
+      border: 1px solid #2ea043;
+    }
+    .rec-wait {
+      background: rgba(210, 153, 34, 0.2);
+      color: #e3b341;
+      border: 1px solid #d29922;
+    }
+    .rec-sell {
+      background: rgba(248, 81, 73, 0.2);
+      color: #f85149;
+      border: 1px solid #f85149;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-buy { background: #3fb950; box-shadow: 0 0 8px #3fb950; }
+    .dot-wait { background: #e3b341; }
+    .dot-sell { background: #f85149; }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🎯 High-Conviction Institutional Radar</h1>
-      <div class="timestamp" id="last-updated">Checking latest cloud scan...</div>
+      <div>
+        <h1>🎯 Institutional Stock Decision Radar</h1>
+        <div class="timestamp" id="last-updated">Loading live cloud scan data...</div>
+      </div>
+      <div>
+        <a href="stock_buying_decision_terminal.html" class="btn-checklist" style="padding: 6px 12px; font-size: 12px;">
+          Open Deep Checklist ↗
+        </a>
+      </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('tab-overview', event)">⚡ Radar & Conviction</button>
-      <button class="tab-btn" onclick="switchTab('tab-pl', event)">📈 Profit & Loss Statement</button>
-      <button class="tab-btn" onclick="switchTab('tab-bs', event)">🏦 Balance Sheet & Cash</button>
-      <a href="stock_buying_decision_terminal.html" target="_blank" class="tab-btn" style="text-decoration: none; background: #238636; border-color: #2ea043; color: white; margin-left: auto;">
-        📋 Pre-Trade Terminal ↗
-      </a>
-    </div>
-
-    <!-- TAB 1: RADAR OVERVIEW -->
-    <div id="tab-overview" class="tab-content active">
-      <div class="card">
-        <h2>🔥 High-Conviction Matches (Technical Momentum + Full Screener Criteria Passed)</h2>
-        <div id="matches-table-container">Loading...</div>
-      </div>
-      <div class="card">
-        <h2>📊 Watchlist Master Matrix (Dual-Engine: Banks vs Corporates)</h2>
-        <div id="overview-table-container">Loading...</div>
-      </div>
-    </div>
-
-    <!-- TAB 2: PROFIT & LOSS -->
-    <div id="tab-pl" class="tab-content">
-      <div class="card">
-        <div class="toggle-bar">
-          <span style="font-size: 13px; font-weight: 600; color: #f0f6fc;">View Frequency:</span>
-          <button id="toggle-annual" class="toggle-btn active" onclick="setPLMode('annual')">Annual (Multi-Year)</button>
-          <button id="toggle-quarterly" class="toggle-btn" onclick="setPLMode('quarterly')">Quarterly (Recent Qs)</button>
-        </div>
-        <div id="pl-table-container">Loading...</div>
-      </div>
-    </div>
-
-    <!-- TAB 3: BALANCE SHEET -->
-    <div id="tab-bs" class="tab-content">
-      <div class="card">
-        <h2>🏦 Balance Sheet: Assets, Equity & Debt Obligations</h2>
-        <div id="bs-table-container">Loading...</div>
-      </div>
+    <div class="card">
+      <table id="radarTable">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>CMP & M.Cap</th>
+            <th>52W High Proximity</th>
+            <th>Checklist Health</th>
+            <th>Key Metric</th>
+            <th>Audit Deep Dive</th>
+            <th style="text-align: right;">Recommendation</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="7" style="text-align: center; color: #8b949e; padding: 24px;">Loading watchlist...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
   <script>
-    let globalData = [];
-    let currentPLMode = 'annual';
-
-    function switchTab(tabId, ev) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      
-      if (ev) ev.target.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
+    function parseNum(val) {
+      if (val === null || val === undefined) return null;
+      if (typeof val === 'number') return val;
+      const clean = String(val).replace(/[₹,%xCr\s]/g, '');
+      const parsed = parseFloat(clean);
+      return isNaN(parsed) ? null : parsed;
     }
 
-    function setPLMode(mode) {
-      currentPLMode = mode;
-      document.getElementById('toggle-annual').classList.toggle('active', mode === 'annual');
-      document.getElementById('toggle-quarterly').classList.toggle('active', mode === 'quarterly');
-      renderPLTable();
+    // Calculates STRICT Recommendation: BUY, WAIT, or SELL
+    function getRecommendation(item) {
+      const isBank = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK');
+      let de = parseNum(item.de);
+      if (de !== null && de > 1.5 && item.symbol !== 'RELIANCE') {
+        de = parseFloat((de / 100).toFixed(2));
+      }
+
+      const roe = parseNum(item.roe);
+      const roa = parseNum(item.roa);
+      const rsi = parseNum(item.rsi);
+      const pct52w = parseNum(item.pct_off_52w);
+      const techMatch = Boolean(item.tech_match);
+
+      let passedRules = 0;
+      let totalRules = 4;
+
+      if (isBank) {
+        if (roa !== null && roa >= 1.1) passedRules++;
+        if (roe !== null && roe >= 13.0) passedRules++;
+        if (pct52w !== null && pct52w <= 15.0) passedRules++;
+        if (techMatch || (rsi !== null && rsi >= 48 && rsi <= 72)) passedRules++;
+      } else {
+        if (de !== null && de <= 0.6) passedRules++;
+        if (roe !== null && roe >= 14.0) passedRules++;
+        if (pct52w !== null && pct52w <= 15.0) passedRules++;
+        if (techMatch || (rsi !== null && rsi >= 48 && rsi <= 72)) passedRules++;
+      }
+
+      // 1. BUY: Both high fundamental score AND active technical breakout
+      if (passedRules >= 4 && techMatch) {
+        return {
+          rec: "BUY",
+          badgeClass: "rec-buy",
+          dotClass: "dot-buy",
+          scoreText: `${passedRules}/${totalRules} Passed`,
+          scoreClass: "score-high"
+        };
+      }
+      // 2. WAIT: Quality business, but price is consolidating, pulled back, or over-extended
+      else if (passedRules >= 2) {
+        return {
+          rec: "WAIT",
+          badgeClass: "rec-wait",
+          dotClass: "dot-wait",
+          scoreText: `${passedRules}/${totalRules} Passed`,
+          scoreClass: "score-mid"
+        };
+      }
+      // 3. SELL: Weak balance sheet, poor metrics, or major technical breakdown
+      else {
+        return {
+          rec: "SELL",
+          badgeClass: "rec-sell",
+          dotClass: "dot-sell",
+          scoreText: `${passedRules}/${totalRules} Passed`,
+          scoreClass: "score-low"
+        };
+      }
     }
 
     fetch('results.json?v=' + new Date().getTime())
       .then(res => res.json())
       .then(data => {
-        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count || 0} setups found)`;
-        globalData = data.all_scanned || [];
+        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated}`;
+        const list = data.all_scanned || [];
 
-        const matchesContainer = document.getElementById('matches-table-container');
-        if (!data.matches || data.matches.length === 0) {
-          matchesContainer.innerHTML = '<p style="color:#8b949e;">No setups met both strict momentum and full institutional fundamental criteria today. Zero trade day.</p>';
-        } else {
-          matchesContainer.innerHTML = buildOverviewTable(data.matches);
-        }
+        const rows = list.map(item => {
+          const recData = getRecommendation(item);
+          const sectorParam = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK') ? 'bank' : 'general';
+          const terminalUrl = `stock_buying_decision_terminal.html?symbol=${encodeURIComponent(item.symbol)}&cmp=${encodeURIComponent(item.price)}&sector=${sectorParam}`;
 
-        document.getElementById('overview-table-container').innerHTML = buildOverviewTable(globalData);
-        renderPLTable();
-        document.getElementById('bs-table-container').innerHTML = buildBSTable(globalData);
-      })
-      .catch(err => {
-        document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting scan data...</p>';
-      });
+          // Format clean D/E
+          let deClean = item.de;
+          let deNum = parseNum(item.de);
+          if (deNum !== null && deNum > 1.5 && item.symbol !== 'RELIANCE') {
+            deClean = (deNum / 100).toFixed(2) + 'x';
+          }
 
-    function getSymbolCell(item) {
-      const sectorParam = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK') ? 'bank' : 'general';
-      const terminalUrl = `stock_buying_decision_terminal.html?symbol=${encodeURIComponent(item.symbol)}&cmp=${encodeURIComponent(item.price)}&sector=${sectorParam}&exchange=NSE`;
+          const primaryMetric = sectorParam === 'bank' 
+            ? `ROA: <b>${item.roa || 'N/A'}</b> | ROE: <b>${item.roe || 'N/A'}</b>` 
+            : `D/E: <b>${deClean || 'N/A'}</b> | ROE: <b>${item.roe || 'N/A'}</b>`;
 
-      return `
-        <td>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
-              ${item.symbol} ↗
-            </a>
-            <a href="${terminalUrl}" target="_blank" title="Open Pre-Trade Terminal" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #1f6feb; color: white; text-decoration: none; font-weight: 600;">
-              Checklist 📋
-            </a>
-          </div>
-          <div style="margin-top: 4px; display: flex; gap: 4px;">
-            <span class="cap-badge">${item.cap_category || 'Large-Cap'}</span>
-            <span class="cap-badge">${item.sector_type || 'CORPORATE'}</span>
-          </div>
-        </td>
-      `;
-    }
-
-    function buildOverviewTable(list) {
-      let rows = list.map(item => {
-        const isHighPass = item.screener_passed;
-        return `
-          <tr>
-            ${getSymbolCell(item)}
-            <td>₹${item.price}<div class="subtext">${item.mcap_str || 'N/A'}</div></td>
-            <td>-${item.pct_off_52w}%<div class="subtext">52W: ₹${item.high_52w}</div></td>
-            <td>${item.vol_surge}x<div class="subtext">RSI: ${item.rsi}</div></td>
-            <td>
-              <span class="score-badge ${isHighPass ? '' : 'warn'}">Pass: ${item.screener_score || 'N/A'}</span>
-              <div class="subtext">${item.primary_label || 'Metric'}: ${item.primary_val || 'N/A'} | ${item.secondary_label || 'Metric'}: ${item.secondary_val || 'N/A'}</div>
-            </td>
-            <td><div>P/E: <b>${item.pe || 'N/A'}</b></div><div class="subtext">PEG: ${item.peg || 'N/A'}</div></td>
-            <td>
-              <span class="badge ${item.badge_type || 'badge-neutral'}">
-                ${item.conviction_tag || 'NEUTRAL'}
-              </span>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      return `<table><thead><tr><th>Stock & Sector</th><th>Price & M.Cap</th><th>From 52W</th><th>Technicals</th><th>Screener Health</th><th>Valuation</th><th>Conviction</th></tr></thead><tbody>${rows}</tbody></table>`;
-    }
-
-    function renderPLTable() {
-      const container = document.getElementById('pl-table-container');
-      const isAnnual = currentPLMode === 'annual';
-
-      let rows = globalData.map(item => {
-        const periods = isAnnual ? (item.annual_pl || []) : (item.quarterly_pl || []);
-
-        if (!periods || periods.length === 0) {
           return `
             <tr>
-              ${getSymbolCell(item)}
-              <td colspan="4" style="color: #8b949e;">Multi-period data currently building. TTM Revenue: <b>${item.revenue || 'N/A'}</b> | PAT: <b>${item.pat || 'N/A'}</b></td>
+              <td>
+                <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" title="View Chart">
+                  ${item.symbol} ↗
+                </a>
+                <div style="margin-top: 4px; display: flex; gap: 4px;">
+                  <span class="tag-badge">${item.cap_category || 'Large-Cap'}</span>
+                  <span class="tag-badge">${item.sector_type || 'CORPORATE'}</span>
+                </div>
+              </td>
+              <td>
+                <div style="font-weight: 700; color: #fff;">₹${item.price}</div>
+                <div class="subtext">${item.mcap_str || 'N/A'}</div>
+              </td>
+              <td>
+                <div style="color: ${item.pct_off_52w <= 10 ? '#3fb950' : '#c9d1d9'}; font-weight: 600;">
+                  -${item.pct_off_52w}%
+                </div>
+                <div class="subtext">52W: ₹${item.high_52w}</div>
+              </td>
+              <td>
+                <span class="score-pill ${recData.scoreClass}">${recData.scoreText}</span>
+                <div class="subtext">RSI: ${item.rsi} | Vol: ${item.vol_surge}x</div>
+              </td>
+              <td>
+                <div style="font-size: 12px;">${primaryMetric}</div>
+                <div class="subtext">Margin: ${item.net_margin || 'N/A'} | P/E: ${item.pe || 'N/A'}</div>
+              </td>
+              <td>
+                <a href="${terminalUrl}" class="btn-checklist">
+                  View Checklist 📋
+                </a>
+              </td>
+              <td style="text-align: right;">
+                <span class="rec-badge ${recData.badgeClass}">
+                  <span class="dot ${recData.dotClass}"></span>
+                  ${recData.rec}
+                </span>
+              </td>
             </tr>
           `;
-        }
+        }).join('');
 
-        let cells = periods.map(p => `
-          <td>
-            <div style="font-weight: 600; color: #f0f6fc;">${p.revenue}</div>
-            <div class="subtext">PAT: <b style="color: #58a6ff;">${p.pat}</b> | Margin: ${p.margin}</div>
-          </td>
-        `).join('');
-
-        return `
-          <tr>
-            ${getSymbolCell(item)}
-            ${cells}
-          </tr>
-        `;
-      }).join('');
-
-      let samplePeriods = [];
-      for (let s of globalData) {
-        let pList = isAnnual ? s.annual_pl : s.quarterly_pl;
-        if (pList && pList.length > 0) {
-          samplePeriods = pList;
-          break;
-        }
-      }
-
-      let headerPeriodCols = samplePeriods.map(p => `<th>${p.period} (Sales & PAT)</th>`).join('');
-      if (!headerPeriodCols) {
-        headerPeriodCols = `<th>Recent Periods</th>`;
-      }
-
-      container.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Stock</th>
-              ${headerPeriodCols}
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
-    }
-
-    function buildBSTable(list) {
-      let rows = list.map(item => `
-        <tr>
-          ${getSymbolCell(item)}
-          <td><b>${item.total_assets || 'N/A'}</b></td>
-          <td>${item.total_equity || 'N/A'}</td>
-          <td><span style="color: ${item.total_debt === 'N/A' || item.total_debt === '₹0 Cr' ? '#3fb950' : '#e3b341'}">${item.total_debt || 'N/A'}</span></td>
-          <td>${item.cash || 'N/A'}</td>
-          <td>${item.de || 'N/A'}</td>
-        </tr>
-      `).join('');
-
-      return `<table><thead><tr><th>Stock</th><th>Total Assets</th><th>Total Equity (Net Worth)</th><th>Total Debt</th><th>Cash & Equiv.</th><th>Debt-to-Equity</th></tr></thead><tbody>${rows}</tbody></table>`;
-    }
+        document.getElementById('tableBody').innerHTML = rows;
+      })
+      .catch(err => {
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #f85149; padding: 24px;">Failed to load scan data. Run the workflow in GitHub Actions.</td></tr>';
+      });
   </script>
 </body>
 </html>
