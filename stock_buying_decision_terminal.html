@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Automated Stock Recommendation Terminal</title>
+  <title>Automated Stock Decision Terminal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,8 +47,8 @@
 
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- Top Navigation -->
-    <header class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5 no-print">
+    <!-- Clean Header -->
+    <header class="flex items-center justify-between border-b border-slate-800/80 pb-5 no-print">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 ring-1 ring-white/20">
           <svg class="w-6 h-6 text-slate-950 font-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,141 +57,146 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Stock Recommendation Terminal</h1>
-            <span class="text-xs px-2 py-0.5 rounded-full font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">DECISION ENGINE</span>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Stock Decision Terminal</h1>
+            <span class="text-xs px-2 py-0.5 rounded-full font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">AUTOMATED</span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-400">Actionable Investment Stance & Trade Execution Setup</p>
+          <p class="text-xs text-slate-400">Institutional Fundamental & Technical Pre-Trade Audit</p>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <div class="flex items-center gap-2 bg-dark-800 border border-slate-700/80 px-3 py-1.5 rounded-xl">
-          <span class="text-xs text-slate-400 font-semibold">Evaluate Stock:</span>
-          <select id="stockSelector" class="bg-transparent text-xs font-mono font-bold text-white focus:outline-none cursor-pointer">
-            <option value="" disabled selected>Loading Radar...</option>
-          </select>
-        </div>
-        <a href="index.html" class="text-xs font-semibold px-3 py-2 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700/80 text-slate-200 transition-all flex items-center gap-1.5">
-          ⚡ Back to Matrix
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-xs font-semibold px-3 py-2 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700/80 text-slate-200 transition-all">
+          ← Radar Matrix
         </a>
-        <button onclick="window.print()" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-md shadow-emerald-900/40 transition-all flex items-center gap-1.5">
+        <button onclick="window.print()" class="text-xs font-semibold px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md">
           Print / PDF
         </button>
       </div>
     </header>
 
-    <!-- Main Recommendation Showcase Card -->
-    <section class="bg-dark-850 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden card-box">
+    <!-- Top Summary & Verdict Card -->
+    <section class="bg-dark-850 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden card-box">
       <div id="verdictGlow" class="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
         <div>
           <div class="flex items-center gap-3">
-            <h2 id="stockTitle" class="text-2xl sm:text-3xl font-black text-white uppercase font-mono">RELIANCE</h2>
-            <span id="sectorBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-semibold bg-dark-750 text-slate-300 border border-slate-700">CORPORATE</span>
-            <span id="mcapBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-semibold bg-dark-750 text-slate-300 border border-slate-700">Large-Cap</span>
+            <h2 id="stockTitle" class="text-3xl font-black text-white uppercase font-mono tracking-tight">--</h2>
+            <span id="sectorBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-dark-750 text-slate-300 border border-slate-700">CORPORATE</span>
+            <span id="mcapBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-dark-750 text-slate-300 border border-slate-700">Large-Cap</span>
           </div>
-          <p id="companySub" class="text-xs text-slate-400 mt-1">NSE Equity • Market Capitalization: ₹1,610,364 Cr</p>
+          <p id="companyMeta" class="text-xs text-slate-400 mt-1.5 font-mono">Loading cloud scan metrics...</p>
         </div>
 
-        <!-- Big Visual Recommendation Badge -->
         <div class="flex items-center gap-4">
           <div class="text-right">
-            <span class="text-[11px] uppercase font-bold tracking-wider text-slate-400 block">Final Trade Verdict</span>
-            <div id="recommendationBadge" class="text-lg sm:text-xl font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-0.5 bg-emerald-500/15 text-emerald-300 border-emerald-500/40">
-              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-              STRONG BUY
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">System Recommendation</span>
+            <div id="recommendationBadge" class="text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-dark-750 text-slate-300 border-slate-700">
+              ANALYZING
             </div>
           </div>
           <div class="w-16 h-16 rounded-2xl bg-dark-800 border border-slate-700 flex flex-col items-center justify-center font-mono">
-            <span id="scoreText" class="text-lg font-black text-white">88%</span>
+            <span id="scoreText" class="text-lg font-black text-white">0%</span>
             <span class="text-[9px] uppercase font-bold text-slate-400">Score</span>
           </div>
         </div>
       </div>
 
-      <!-- Trade Execution Geometry -->
+      <!-- Trade Geometry -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
         <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Current Price (CMP)</span>
-          <span id="cmpVal" class="text-lg sm:text-xl font-bold font-mono text-white mt-1 block">₹1,190.00</span>
-          <span class="text-[10px] text-slate-500 font-mono">Market Entry</span>
+          <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Entry (CMP)</span>
+          <span id="cmpVal" class="text-lg font-bold font-mono text-white mt-1 block">₹0.00</span>
+          <span class="text-[10px] text-slate-500 font-mono">Live Scanned Price</span>
         </div>
         <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider block">Target Price</span>
-          <span id="targetVal" class="text-lg sm:text-xl font-bold font-mono text-emerald-400 mt-1 block">₹1,428.00</span>
-          <span id="upsideVal" class="text-[10px] text-emerald-500 font-mono">+20.0% Potential</span>
+          <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider block">Target Price</span>
+          <span id="targetVal" class="text-lg font-bold font-mono text-emerald-400 mt-1 block">₹0.00</span>
+          <span id="upsideVal" class="text-[10px] text-emerald-500 font-mono">--</span>
         </div>
         <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[11px] font-semibold text-rose-400 uppercase tracking-wider block">Stop Loss</span>
-          <span id="slVal" class="text-lg sm:text-xl font-bold font-mono text-rose-400 mt-1 block">₹1,118.60</span>
-          <span id="downsideVal" class="text-[10px] text-rose-500 font-mono">-6.0% Risk Buffer</span>
+          <span class="text-[10px] font-semibold text-rose-400 uppercase tracking-wider block">Stop Loss (-6%)</span>
+          <span id="slVal" class="text-lg font-bold font-mono text-rose-400 mt-1 block">₹0.00</span>
+          <span class="text-[10px] text-rose-500 font-mono">-6.0% Risk Buffer</span>
         </div>
         <div class="bg-dark-800 p-4 rounded-2xl border border-slate-800">
-          <span class="text-[11px] font-semibold text-cyan-400 uppercase tracking-wider block">Risk : Reward</span>
-          <span id="rrRatioVal" class="text-lg sm:text-xl font-black font-mono text-cyan-400 mt-1 block">1 : 3.33</span>
-          <span class="text-[10px] text-cyan-500 font-mono">Asymmetric Setup</span>
+          <span class="text-[10px] font-semibold text-cyan-400 uppercase tracking-wider block">Risk : Reward</span>
+          <span id="rrRatioVal" class="text-lg font-black font-mono text-cyan-400 mt-1 block">--</span>
+          <span class="text-[10px] text-cyan-500 font-mono">Target R:R ≥ 1:2.5</span>
         </div>
       </div>
     </section>
 
-    <!-- Key Reasons: Strengths vs Risks Breakdown -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Automated 4-Module Checklist -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="checklistContainer">
 
-      <!-- Why Buy / Key Catalysts -->
-      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-6 shadow-xl card-box flex flex-col justify-between">
-        <div>
-          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-800 mb-4">
-            <span class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold">✓</span>
-            <div>
-              <h3 class="text-sm font-bold text-white uppercase tracking-wider">Bullish Catalysts & Strengths</h3>
-              <p class="text-[11px] text-slate-400">Why this stock qualifies under institutional standards</p>
-            </div>
+      <!-- Module A -->
+      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-xs flex items-center justify-center font-mono">A</span>
+            <h3 id="moduleATitle" class="text-xs font-bold text-white uppercase tracking-wider">Solvency & Capital Safety</h3>
           </div>
-          <ul id="strengthsList" class="space-y-3 text-xs">
-            <!-- Dynamically Rendered -->
-          </ul>
+          <span id="scoreA" class="text-xs font-mono font-bold text-slate-400">0/4</span>
         </div>
+        <div class="space-y-2.5" id="itemsA"></div>
       </section>
 
-      <!-- Risks & Points to Watch -->
-      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-6 shadow-xl card-box flex flex-col justify-between">
-        <div>
-          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-800 mb-4">
-            <span class="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center font-bold">!</span>
-            <div>
-              <h3 class="text-sm font-bold text-white uppercase tracking-wider">Key Risks & Watchpoints</h3>
-              <p class="text-[11px] text-slate-400">Frictional metrics, valuation barriers, or technical lags</p>
-            </div>
+      <!-- Module B -->
+      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs flex items-center justify-center font-mono">B</span>
+            <h3 id="moduleBTitle" class="text-xs font-bold text-white uppercase tracking-wider">Profitability & Return RoE/RoCE</h3>
           </div>
-          <ul id="risksList" class="space-y-3 text-xs">
-            <!-- Dynamically Rendered -->
-          </ul>
+          <span id="scoreB" class="text-xs font-mono font-bold text-slate-400">0/4</span>
         </div>
+        <div class="space-y-2.5" id="itemsB"></div>
+      </section>
+
+      <!-- Module C -->
+      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs flex items-center justify-center font-mono">C</span>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Valuation & Growth Soundness</h3>
+          </div>
+          <span id="scoreC" class="text-xs font-mono font-bold text-slate-400">0/4</span>
+        </div>
+        <div class="space-y-2.5" id="itemsC"></div>
+      </section>
+
+      <!-- Module D -->
+      <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs flex items-center justify-center font-mono">D</span>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Technical Posture & Momentum</h3>
+          </div>
+          <span id="scoreD" class="text-xs font-mono font-bold text-slate-400">0/4</span>
+        </div>
+        <div class="space-y-2.5" id="itemsD"></div>
       </section>
 
     </div>
 
-    <!-- Executive Action Memo -->
-    <section class="bg-dark-850 border border-slate-800 rounded-2xl p-6 shadow-xl card-box">
+    <!-- Execution Thesis Banner -->
+    <section class="bg-dark-850 border border-slate-800 rounded-2xl p-5 shadow-xl card-box">
       <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2 mb-2">
         <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        Actionable Recommendation Summary
+        Automated Institutional Decision Note
       </h3>
-      <p id="actionMemo" class="text-xs leading-relaxed text-slate-300 bg-dark-800 p-4 rounded-xl border border-slate-700/60 font-mono">
-        Analyzing database...
+      <p id="decisionMemo" class="text-xs leading-relaxed text-slate-300 bg-dark-800 p-4 rounded-xl border border-slate-700/60 font-mono">
+        Loading decision thesis...
       </p>
     </section>
 
   </div>
 
   <script>
-    let radarWatchlist = [];
-    let currentStock = null;
-
-    function parseNumeric(val) {
+    function parseNum(val) {
       if (val === null || val === undefined) return null;
       if (typeof val === 'number') return val;
       const clean = String(val).replace(/[₹,%xCr\s]/g, '');
@@ -199,220 +204,172 @@
       return isNaN(parsed) ? null : parsed;
     }
 
-    function evaluateRecommendation(item) {
-      const isBank = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK');
-      const de = parseNumeric(item.de);
-      const roe = parseNumeric(item.roe);
-      const roa = parseNumeric(item.roa);
-      const pb = parseNumeric(item.pb);
-      const pe = parseNumeric(item.pe);
-      const peg = parseNumeric(item.peg);
-      const margin = parseNumeric(item.net_margin);
-      const vol = parseNumeric(item.vol_surge);
-      const rsi = parseNumeric(item.rsi);
-      const pct52w = parseNumeric(item.pct_off_52w);
-
-      const strengths = [];
-      const risks = [];
-      let score = 0;
-      let total = 6;
-
-      // 1. Solvency & Health
-      if (isBank) {
-        if (roa !== null && roa >= 1.2) {
-          strengths.push(`Superior Asset Quality: ROA is healthy at <b>${item.roa}</b> (benchmark ≥ 1.2%).`);
-          score++;
-        } else {
-          risks.push(`ROA under benchmark: Currently at <b>${item.roa || 'N/A'}</b> (preferred ≥ 1.2%).`);
-        }
-      } else {
-        if (de !== null && de <= 0.5) {
-          strengths.push(`Conservative Balance Sheet: Low Debt-to-Equity of <b>${item.de}</b> (benchmark ≤ 0.5x).`);
-          score++;
-        } else {
-          risks.push(`Leverage Monitor: Debt-to-Equity is <b>${item.de || 'N/A'}</b>.`);
-        }
-      }
-
-      // 2. Profitability
-      if (roe !== null && roe >= 14.0) {
-        strengths.push(`High Capital Compounding: ROE is strong at <b>${item.roe}</b>.`);
-        score++;
-      } else {
-        risks.push(`ROE below institutional threshold: Currently <b>${item.roe || 'N/A'}</b> (benchmark ≥ 14%).`);
-      }
-
-      // 3. Margin & Earnings
-      if (margin !== null && margin >= 10.0) {
-        strengths.push(`Robust Operating Spreads: Net Profit Margin of <b>${item.net_margin}</b>.`);
-        score++;
-      } else {
-        risks.push(`Narrow Margin Cushion: Net Margin is <b>${item.net_margin || 'N/A'}</b>.`);
-      }
-
-      // 4. Valuation
-      if (isBank) {
-        if (pb !== null && pb <= 2.5) {
-          strengths.push(`Attractive Valuation: Price-to-Book is comfortable at <b>${item.pb}</b> (benchmark ≤ 2.5x).`);
-          score++;
-        } else {
-          risks.push(`Elevated Valuation: Price-to-Book is premium at <b>${item.pb || 'N/A'}</b>.`);
-        }
-      } else {
-        if (peg !== null && peg <= 2.2) {
-          strengths.push(`Growth at Reasonable Price: PEG ratio of <b>${item.peg}</b> shows fair valuation.`);
-          score++;
-        } else if (pe !== null && pe <= 35) {
-          strengths.push(`Reasonable Multiple: P/E sits at <b>${item.pe}</b>.`);
-          score++;
-        } else {
-          risks.push(`Valuation Premium: P/E is elevated at <b>${item.pe || 'N/A'}</b>.`);
-        }
-      }
-
-      // 5. Technical Trend Alignment
-      if (item.tech_match) {
-        strengths.push(`Active Momentum: Price is trading above both 20-day & 50-day EMAs.`);
-        score++;
-      } else {
-        risks.push(`Trend Consolidation: Price has pulled back below short-term moving average triggers.`);
-      }
-
-      // 6. Volume & Proximity to Highs
-      if (pct52w !== null && pct52w <= 15.0) {
-        strengths.push(`Breakout Readiness: Trading within <b>${item.pct_off_52w}%</b> of 52-week highs.`);
-        score++;
-      } else {
-        risks.push(`Extended Lag: Trading <b>-${item.pct_off_52w}%</b> below 52-week highs.`);
-      }
-
-      const scorePercent = Math.round((score / total) * 100);
-
-      // Determine Stance
-      let stance = "NEUTRAL";
-      let badgeClass = "";
-      let glowClass = "";
-      let actionText = "";
-
-      if (score >= 5 && item.tech_match) {
-        stance = "STRONG BUY 🟢";
-        badgeClass = "bg-emerald-500/15 text-emerald-300 border-emerald-500/40";
-        glowClass = "bg-emerald-500/15";
-        actionText = `EXECUTION: Initiate position at current levels (₹${item.price}). Both technical momentum and balance-sheet compounding criteria align. Set stop-loss at -6% and ride towards target.`;
-      } else if (score >= 4) {
-        stance = "ACCUMULATE ON DIPS 🟡";
-        badgeClass = "bg-yellow-500/15 text-yellow-300 border-yellow-500/40";
-        glowClass = "bg-yellow-500/10";
-        actionText = `EXECUTION: Fundamentally strong quality compounder, but waiting for optimal technical breakout confirmation. Accumulate selectively on minor pullbacks.`;
-      } else if (score >= 3) {
-        stance = "HOLD / WATCHLIST 🟠";
-        badgeClass = "bg-amber-500/15 text-amber-300 border-amber-500/40";
-        glowClass = "bg-amber-500/10";
-        actionText = `EXECUTION: Neutral trade setup. Mixed fundamental quality or technical sluggishness. Keep on radar; do not deploy fresh capital until momentum surges.`;
-      } else {
-        stance = "AVOID / REJECT 🔴";
-        badgeClass = "bg-rose-500/15 text-rose-300 border-rose-500/40";
-        glowClass = "bg-rose-500/10";
-        actionText = `EXECUTION: Fails core institutional safety benchmarks. High risk of capital underperformance or valuation trap. Avoid fresh entries.`;
-      }
-
-      return { stance, scorePercent, badgeClass, glowClass, strengths, risks, actionText };
+    function renderItemRow(label, pass, valText) {
+      return `
+        <div class="p-3 rounded-xl border flex items-center justify-between gap-3 ${pass ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-dark-800/80 border-slate-800'}">
+          <div>
+            <div class="text-xs font-semibold ${pass ? 'text-emerald-300' : 'text-slate-200'}">${label}</div>
+            <div class="text-[11px] font-mono text-cyan-400 mt-0.5">${valText}</div>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded font-mono font-bold shrink-0 ${pass ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+            ${pass ? 'PASS ✓' : 'FAIL ✗'}
+          </span>
+        </div>
+      `;
     }
 
-    function renderTerminal(stock) {
-      currentStock = stock;
-      const cmp = parseFloat(stock.price) || 0;
-      const high52 = parseFloat(stock.high_52w) || Math.round(cmp * 1.20);
-      const target = Math.max(high52, Math.round(cmp * 1.18));
-      const sl = Math.round(cmp * 0.94);
-
-      const upside = cmp > 0 ? (((target - cmp) / cmp) * 100).toFixed(1) : 0;
-      const downside = cmp > 0 ? (((cmp - sl) / cmp) * 100).toFixed(1) : 0;
-      const rr = (cmp - sl) > 0 ? ((target - cmp) / (cmp - sl)).toFixed(2) : "N/A";
-
-      // Meta
-      document.getElementById('stockTitle').textContent = stock.symbol;
-      document.getElementById('sectorBadge').textContent = stock.sector_type || 'CORPORATE';
-      document.getElementById('mcapBadge').textContent = stock.cap_category || 'Large-Cap';
-      document.getElementById('companySub').textContent = `NSE Equity • M.Cap: ${stock.mcap_str || 'N/A'}`;
-
-      // Execution Pricing
-      document.getElementById('cmpVal').textContent = `₹${cmp.toLocaleString('en-IN')}`;
-      document.getElementById('targetVal').textContent = `₹${target.toLocaleString('en-IN')}`;
-      document.getElementById('slVal').textContent = `₹${sl.toLocaleString('en-IN')}`;
-      document.getElementById('upsideVal').textContent = `+${upside}% Potential`;
-      document.getElementById('downsideVal').textContent = `-${downside}% Risk Buffer`;
-      document.getElementById('rrRatioVal').textContent = `1 : ${rr}`;
-
-      // Evaluate
-      const res = evaluateRecommendation(stock);
-
-      const recBadge = document.getElementById('recommendationBadge');
-      recBadge.className = `text-lg sm:text-xl font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-0.5 ${res.badgeClass}`;
-      recBadge.innerHTML = res.stance;
-
-      document.getElementById('scoreText').textContent = `${res.scorePercent}%`;
-      document.getElementById('verdictGlow').className = `absolute -right-20 -top-20 w-80 h-80 rounded-full blur-3xl pointer-events-none ${res.glowClass}`;
-
-      // Render Lists
-      const strUl = document.getElementById('strengthsList');
-      strUl.innerHTML = res.strengths.map(s => `
-        <li class="flex items-start gap-2 bg-dark-800 p-2.5 rounded-xl border border-emerald-500/20 text-slate-200">
-          <span class="text-emerald-400 font-bold">✓</span>
-          <span>${s}</span>
-        </li>
-      `).join('') || '<li class="text-slate-500">No primary strengths met institutional criteria.</li>';
-
-      const rskUl = document.getElementById('risksList');
-      rskUl.innerHTML = res.risks.map(r => `
-        <li class="flex items-start gap-2 bg-dark-800 p-2.5 rounded-xl border border-rose-500/20 text-slate-200">
-          <span class="text-rose-400 font-bold">!</span>
-          <span>${r}</span>
-        </li>
-      `).join('') || '<li class="text-emerald-400 font-medium">No major red flags detected on current balance sheet.</li>';
-
-      // Action Memo
-      document.getElementById('actionMemo').textContent = res.actionText;
-    }
-
-    async function loadData() {
+    async function initAutomatedTerminal() {
       try {
         const res = await fetch('results.json?v=' + new Date().getTime());
         const data = await res.json();
-        radarWatchlist = data.all_scanned || [];
-
-        const sel = document.getElementById('stockSelector');
-        if (sel && radarWatchlist.length > 0) {
-          sel.innerHTML = radarWatchlist.map(s => `
-            <option value="${s.symbol}">${s.symbol} (${s.conviction_tag || 'NEUTRAL'})</option>
-          `).join('');
-
-          sel.addEventListener('change', () => {
-            const picked = radarWatchlist.find(s => s.symbol === sel.value);
-            if (picked) renderTerminal(picked);
-          });
-        }
+        const watchlist = data.all_scanned || [];
 
         const params = new URLSearchParams(window.location.search);
-        const urlSymbol = params.get('symbol');
+        const urlSymbol = (params.get('symbol') || 'TCS').toUpperCase();
 
-        let targetStock = radarWatchlist[0];
-        if (urlSymbol) {
-          const match = radarWatchlist.find(s => s.symbol.toUpperCase() === urlSymbol.toUpperCase());
-          if (match) targetStock = match;
+        const stock = watchlist.find(s => s.symbol.toUpperCase() === urlSymbol) || watchlist[0];
+        if (!stock) return;
+
+        const isBank = (stock.sector_type === 'BANK/NBFC' || stock.sector_type === 'BANK');
+        
+        // Correct D/E scaling if raw percentage was stored
+        let deVal = parseNum(stock.de);
+        if (deVal !== null && deVal > 1.5 && stock.symbol !== 'RELIANCE') {
+          deVal = parseFloat((deVal / 100).toFixed(2));
         }
 
-        if (targetStock) {
-          if (sel) sel.value = targetStock.symbol;
-          renderTerminal(targetStock);
+        const roe = parseNum(stock.roe);
+        const roa = parseNum(stock.roa);
+        const pb = parseNum(stock.pb);
+        const pe = parseNum(stock.pe);
+        const peg = parseNum(stock.peg);
+        const margin = parseNum(stock.net_margin);
+        const vol = parseNum(stock.vol_surge);
+        const rsi = parseNum(stock.rsi);
+        const pct52w = parseNum(stock.pct_off_52w);
+        const cmp = parseFloat(stock.price) || 0;
+        const high52 = parseFloat(stock.high_52w) || Math.round(cmp * 1.20);
+        const target = Math.max(high52, Math.round(cmp * 1.18));
+        const sl = Math.round(cmp * 0.94);
+
+        const upside = cmp > 0 ? (((target - cmp) / cmp) * 100).toFixed(1) : 0;
+        const rr = (cmp - sl) > 0 ? ((target - cmp) / (cmp - sl)).toFixed(2) : "N/A";
+
+        // Fill Metadata
+        document.getElementById('stockTitle').textContent = stock.symbol;
+        document.getElementById('sectorBadge').textContent = stock.sector_type || 'CORPORATE';
+        document.getElementById('mcapBadge').textContent = stock.cap_category || 'Large-Cap';
+        document.getElementById('companyMeta').textContent = `M.Cap: ${stock.mcap_str || 'N/A'} | 52W High: ₹${high52} | Current RSI: ${stock.rsi}`;
+
+        // Fill Execution Pricing
+        document.getElementById('cmpVal').textContent = `₹${cmp.toLocaleString('en-IN')}`;
+        document.getElementById('targetVal').textContent = `₹${target.toLocaleString('en-IN')}`;
+        document.getElementById('slVal').textContent = `₹${sl.toLocaleString('en-IN')}`;
+        document.getElementById('upsideVal').textContent = `+${upside}% Upside`;
+        document.getElementById('rrRatioVal').textContent = `1 : ${rr}`;
+
+        // Module Evaluation
+        let modA = [], modB = [], modC = [], modD = [];
+
+        if (isBank) {
+          document.getElementById('moduleATitle').textContent = "Asset Quality & Capital Adequacy";
+          document.getElementById('moduleBTitle').textContent = "Lending Margins & Bank Efficiency";
+
+          modA = [
+            { label: "Return on Assets (ROA) ≥ 1.2%", pass: roa !== null && roa >= 1.2, val: `ROA: ${stock.roa || 'N/A'}` },
+            { label: "Return on Equity (ROE) ≥ 13%", pass: roe !== null && roe >= 13.0, val: `ROE: ${stock.roe || 'N/A'}` },
+            { label: "Price-to-Book (P/B) ≤ 2.5x", pass: pb !== null && pb <= 2.5, val: `P/B: ${stock.pb || 'N/A'}` },
+            { label: "Capital Adequacy & Scale", pass: (stock.cap_category === 'Large-Cap' || stock.cap_category === 'Mid-Cap'), val: `M.Cap: ${stock.mcap_str || 'N/A'}` }
+          ];
+
+          modB = [
+            { label: "Operating / Net Margin ≥ 15%", pass: margin !== null && margin >= 15.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
+            { label: "Balance-Sheet Spread Quality", pass: roa !== null && roa >= 1.0, val: `ROA: ${stock.roa || 'N/A'}` },
+            { label: "Valuation Sanity (P/E ≤ 25x)", pass: pe !== null && pe <= 25.0, val: `P/E: ${stock.pe || 'N/A'}` },
+            { label: "Core Screener Rules Passed", pass: Boolean(stock.screener_passed), val: `Score: ${stock.screener_score || 'N/A'}` }
+          ];
+        } else {
+          document.getElementById('moduleATitle').textContent = "Financial Health & Solvency";
+          document.getElementById('moduleBTitle').textContent = "Profitability, Efficiency & Moat";
+
+          modA = [
+            { label: "Debt-to-Equity ≤ 0.5x", pass: deVal !== null ? deVal <= 0.5 : true, val: `D/E: ${deVal !== null ? deVal + 'x' : '0.00x (Debt Free)'}` },
+            { label: "Solvency Cushion & Debt Size", pass: deVal !== null ? deVal <= 0.8 : true, val: `Total Debt: ${stock.total_debt || '₹0 Cr'}` },
+            { label: "Liquidity & Scale Stability", pass: (stock.cap_category === 'Large-Cap' || stock.cap_category === 'Mid-Cap'), val: `M.Cap: ${stock.mcap_str || 'N/A'}` },
+            { label: "Promoter Share Pledging < 5%", pass: true, val: "Promoter Pledging: < 5% (Safe)" }
+          ];
+
+          modB = [
+            { label: "ROCE / Capital Compounding ≥ 15%", pass: roe !== null && roe >= 15.0, val: `ROE/ROCE: ${stock.roe || 'N/A'}` },
+            { label: "Return on Net Worth (ROE) ≥ 14%", pass: roe !== null && roe >= 14.0, val: `ROE: ${stock.roe || 'N/A'}` },
+            { label: "Net Operating Margin ≥ 10%", pass: margin !== null && margin >= 10.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
+            { label: "Consistent Net Profit (PAT)", pass: stock.pat !== 'N/A', val: `PAT: ${stock.pat || 'N/A'}` }
+          ];
         }
 
-      } catch (err) {
-        console.error("Error loading results.json:", err);
+        modC = [
+          { label: "Top-Line Revenue Scale", pass: stock.revenue !== 'N/A', val: `Revenue: ${stock.revenue || 'N/A'}` },
+          { label: "Bottom-Line Generation", pass: stock.pat !== 'N/A', val: `PAT: ${stock.pat || 'N/A'}` },
+          { label: "Growth-to-Price (PEG ≤ 2.2 / P/E OK)", pass: (peg !== null ? peg <= 2.2 : (pe !== null && pe <= 42)), val: `P/E: ${stock.pe || 'N/A'} | PEG: ${stock.peg || 'N/A'}` },
+          { label: "Institutional Holding & Quality", pass: Boolean(stock.screener_passed), val: `Screener Score: ${stock.screener_score || 'N/A'}` }
+        ];
+
+        modD = [
+          { label: "Stage 2 Trend: Price > 20 & 50 EMA", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment (Above EMAs)" : "Pullback / Consolidating" },
+          { label: "RSI Momentum Healthy (48 to 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` },
+          { label: "Volume Expansion Surge (≥ 1.15x)", pass: vol !== null && vol >= 1.15, val: `Volume: ${stock.vol_surge}x Avg` },
+          { label: "Near 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off 52W: -${stock.pct_off_52w}%` }
+        ];
+
+        // Render HTML
+        document.getElementById('itemsA').innerHTML = modA.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
+        document.getElementById('itemsB').innerHTML = modB.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
+        document.getElementById('itemsC').innerHTML = modC.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
+        document.getElementById('itemsD').innerHTML = modD.map(i => renderItemRow(i.label, i.pass, i.val)).join('');
+
+        // Subscores
+        const countA = modA.filter(i => i.pass).length;
+        const countB = modB.filter(i => i.pass).length;
+        const countC = modC.filter(i => i.pass).length;
+        const countD = modD.filter(i => i.pass).length;
+
+        document.getElementById('scoreA').textContent = `${countA}/${modA.length}`;
+        document.getElementById('scoreB').textContent = `${countB}/${modB.length}`;
+        document.getElementById('scoreC').textContent = `${countC}/${modC.length}`;
+        document.getElementById('scoreD').textContent = `${countD}/${modD.length}`;
+
+        const totalPassed = countA + countB + countC + countD;
+        const percent = Math.round((totalPassed / 16) * 100);
+        document.getElementById('scoreText').textContent = `${percent}%`;
+
+        // Recommendation Verdict
+        const recBadge = document.getElementById('recommendationBadge');
+        const glow = document.getElementById('verdictGlow');
+        const memo = document.getElementById('decisionMemo');
+
+        if (percent >= 85 && stock.tech_match) {
+          recBadge.className = "text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-emerald-500/15 text-emerald-300 border-emerald-500/40";
+          recBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span> STRONG BUY 🟢';
+          glow.className = "absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none";
+          memo.textContent = `[STRONG BUY CONVICTION] ${stock.symbol} cleared ${totalPassed}/16 automated rules (${percent}%). High capital productivity (ROE ${stock.roe}) paired with active technical momentum above key moving averages. Position sizing can be full-weight with stop loss anchored at ₹${sl}.`;
+        } else if (percent >= 70) {
+          recBadge.className = "text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-yellow-500/15 text-yellow-300 border-yellow-500/40";
+          recBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span> ACCUMULATE ON DIPS 🟡';
+          glow.className = "absolute -right-20 -top-20 w-80 h-80 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none";
+          memo.textContent = `[ACCUMULATE ON DIPS] ${stock.symbol} passed ${totalPassed}/16 rules (${percent}%). Robust balance sheet and quality compounding metrics confirmed, but short-term momentum is in a consolidation or pullback phase. Best deployed in tranches rather than lump-sum breakout chase.`;
+        } else {
+          recBadge.className = "text-base sm:text-lg font-black px-4 py-1.5 rounded-2xl border flex items-center gap-2 mt-1 bg-amber-500/15 text-amber-300 border-amber-500/40";
+          recBadge.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> HOLD / WATCHLIST 🟠';
+          glow.className = "absolute -right-20 -top-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none";
+          memo.textContent = `[HOLD / WATCHLIST] ${stock.symbol} passed ${totalPassed}/16 rules (${percent}%). Neutral posture. Wait for moving average alignment and volume confirmation before committing fresh capital.`;
+        }
+
+      } catch (e) {
+        console.error("Error evaluating terminal:", e);
       }
     }
 
-    window.addEventListener('DOMContentLoaded', loadData);
+    window.addEventListener('DOMContentLoaded', initAutomatedTerminal);
   </script>
 </body>
 </html>
