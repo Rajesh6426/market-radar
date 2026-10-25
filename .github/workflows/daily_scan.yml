@@ -1,39 +1,43 @@
-name: Daily Cloud Stock Scan
+name: Market Radar Scanner
 
 on:
   schedule:
-    # 10:30 AM UTC = 4:00 PM IST (Mon to Fri)
-    - cron: '30 10 * * 1-5'
-  workflow_dispatch:
+    # Runs Monday to Friday (1-5) every 2 hours during market hours
+    # 04:15 UTC = 09:45 AM IST
+    # 06:15 UTC = 11:45 AM IST
+    # 08:15 UTC = 01:45 PM IST
+    # 10:15 UTC = 03:45 PM IST
+    - cron: '15 4,6,8,10 * * 1-5'
+
+  workflow_dispatch: # Allows manual one-click runs anytime from the GitHub website
+
+permissions:
+  contents: write
 
 jobs:
-  scan-and-publish:
+  scan:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
+          cache: 'pip'
 
       - name: Install Dependencies
         run: |
-          pip install pandas yfinance requests pytz curl_cffi
+          python -m pip install --upgrade pip
+          pip install yfinance pandas numpy pytz
 
-      - name: Run Momentum Scanner
-        run: |
-          python scanner.py
+      - name: Run Market Scanner
+        run: python scanner.py
 
-      - name: Commit & Push Results
+      - name: Commit and Push Updated Results
         run: |
-          git config --global user.name "MarketRadarBot"
-          git config --global user.email "bot@github.com"
-          git pull --rebase origin main || true
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add results.json
-          git commit -m "Auto-update market radar results [skip ci]" || echo "No changes to commit"
-          git push origin main
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Automated market scan update [skip ci]" && git push)
