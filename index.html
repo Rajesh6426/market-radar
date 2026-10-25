@@ -51,7 +51,6 @@
       font-family: monospace;
     }
 
-    /* Filter Controls Bar */
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
@@ -281,15 +280,13 @@
         <div class="timestamp" id="last-updated">Loading live cloud scan data...</div>
       </div>
       <div>
-        <a href="stock_buying_decision_terminal.html" class="btn-checklist" style="padding: 6px 12px; font-size: 12px;">
+        <a id="topChecklistBtn" href="stock_buying_decision_terminal.html" class="btn-checklist" style="padding: 6px 12px; font-size: 12px;">
           Open Deep Checklist ↗
         </a>
       </div>
     </header>
 
-    <!-- Instant Filter & Search Control Panel -->
     <div class="filter-bar">
-      <!-- Recommendation Filter Buttons -->
       <div class="filter-group">
         <button class="filter-btn active" onclick="setRecFilter('ALL', this)">
           All <span class="count-pill" id="count-all">0</span>
@@ -305,7 +302,6 @@
         </button>
       </div>
 
-      <!-- Search & Sector Dropdown -->
       <div class="filter-group">
         <select id="sectorFilter" class="select-dropdown" onchange="applyFilters()">
           <option value="ALL">All Sectors</option>
@@ -322,7 +318,6 @@
       </div>
     </div>
 
-    <!-- Main Results Table -->
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <span id="resultsCount" style="font-size: 12px; color: #8b949e; font-family: monospace;">Showing 0 stocks</span>
@@ -361,7 +356,7 @@
     function getRecommendation(item) {
       const isBank = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK');
       let de = parseNum(item.de);
-      if (de !== null && de > 1.5 && item.symbol !== 'RELIANCE') {
+      if (de !== null && de > 1.5) {
         de = parseFloat((de / 100).toFixed(2));
       }
 
@@ -432,18 +427,15 @@
       const sectorChoice = document.getElementById('sectorFilter').value;
 
       const filtered = globalList.filter(item => {
-        // 1. Recommendation Filter
         if (currentRecFilter !== 'ALL' && item._computedRec.rec !== currentRecFilter) {
           return false;
         }
 
-        // 2. Sector Filter
         if (sectorChoice !== 'ALL') {
           const itemSector = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK') ? 'BANK/NBFC' : 'CORPORATE';
           if (itemSector !== sectorChoice) return false;
         }
 
-        // 3. Search Query Filter
         if (query && !item.symbol.toUpperCase().includes(query)) {
           return false;
         }
@@ -456,6 +448,12 @@
 
     function renderTable(list) {
       document.getElementById('resultsCount').innerText = `Showing ${list.length} of ${globalList.length} stocks`;
+
+      const topBtn = document.getElementById('topChecklistBtn');
+      if (topBtn && list.length > 0) {
+        topBtn.href = `stock_buying_decision_terminal.html?symbol=${encodeURIComponent(list[0].symbol)}`;
+        topBtn.innerText = `Audit ${list[0].symbol} Checklist 📋 ↗`;
+      }
 
       if (list.length === 0) {
         document.getElementById('tableBody').innerHTML = `
@@ -471,7 +469,7 @@
 
         let deClean = item.de;
         let deNum = parseNum(item.de);
-        if (deNum !== null && deNum > 1.5 && item.symbol !== 'RELIANCE') {
+        if (deNum !== null && deNum > 1.5) {
           deClean = (deNum / 100).toFixed(2) + 'x';
         }
 
@@ -532,7 +530,6 @@
         document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated}`;
         globalList = data.all_scanned || [];
 
-        // Pre-compute recommendations and counts
         let buyCount = 0, waitCount = 0, sellCount = 0;
         globalList.forEach(item => {
           item._computedRec = getRecommendation(item);
@@ -541,7 +538,6 @@
           else sellCount++;
         });
 
-        // Update count pills
         document.getElementById('count-all').innerText = globalList.length;
         document.getElementById('count-buy').innerText = buyCount;
         document.getElementById('count-wait').innerText = waitCount;

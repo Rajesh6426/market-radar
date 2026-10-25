@@ -35,17 +35,26 @@
 
   <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
 
-    <!-- Header -->
-    <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+    <!-- Header with Quick Switcher -->
+    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
       <div class="flex items-center gap-3">
         <a href="index.html" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700 text-slate-300 transition-all">
           ← Back to Radar
         </a>
         <h1 class="text-xl font-bold text-white font-mono">PRE-TRADE AUDIT</h1>
       </div>
-      <button onclick="window.print()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700 text-slate-300">
-        Print / PDF
-      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 bg-dark-800 border border-slate-700 px-3 py-1.5 rounded-xl">
+          <span class="text-xs text-slate-400 font-semibold">Stock:</span>
+          <select id="stockSelector" class="bg-transparent text-xs font-mono font-bold text-white focus:outline-none cursor-pointer">
+            <option value="" disabled selected>Loading...</option>
+          </select>
+        </div>
+        <button onclick="window.print()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-slate-700 text-slate-300">
+          Print / PDF
+        </button>
+      </div>
     </div>
 
     <!-- Main Verdict Card -->
@@ -58,7 +67,7 @@
         <p id="companyMeta" class="text-xs text-slate-400 mt-1.5 font-mono">Loading data...</p>
       </div>
 
-      <div class="text-right sm:text-right">
+      <div class="text-right">
         <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Decision</span>
         <div id="verdictBox" class="inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono border">
           ANALYZING...
@@ -88,14 +97,14 @@
         <h3 class="text-xs font-bold text-white uppercase tracking-wider font-mono">Automated Decision Checklist</h3>
         <span id="scoreBadge" class="text-xs font-mono font-bold text-slate-400">0 / 8 Passed</span>
       </div>
-      <div id="checklistItems" class="space-y-2.5">
-        <!-- Checklist rendered dynamically -->
-      </div>
+      <div id="checklistItems" class="space-y-2.5"></div>
     </div>
 
   </div>
 
   <script>
+    let globalWatchlist = [];
+
     function parseNum(val) {
       if (val === null || val === undefined) return null;
       if (typeof val === 'number') return val;
@@ -118,97 +127,118 @@
       `;
     }
 
-    async function loadStockChecklist() {
+    function renderStockDetails(stock) {
+      if (!stock) return;
+
+      const isBank = (stock.sector_type === 'BANK/NBFC' || stock.sector_type === 'BANK');
+      
+      let deVal = parseNum(stock.de);
+      if (deVal !== null && deVal > 1.5) {
+        deVal = parseFloat((deVal / 100).toFixed(2));
+      }
+
+      const roe = parseNum(stock.roe);
+      const roa = parseNum(stock.roa);
+      const pb = parseNum(stock.pb);
+      const pe = parseNum(stock.pe);
+      const peg = parseNum(stock.peg);
+      const margin = parseNum(stock.net_margin);
+      const rsi = parseNum(stock.rsi);
+      const pct52w = parseNum(stock.pct_off_52w);
+      const cmp = parseFloat(stock.price) || 0;
+      const high52 = parseFloat(stock.high_52w) || Math.round(cmp * 1.20);
+      const target = Math.max(high52, Math.round(cmp * 1.18));
+      const sl = Math.round(cmp * 0.94);
+
+      document.getElementById('stockTitle').textContent = stock.symbol;
+      document.getElementById('sectorBadge').textContent = stock.sector_type || 'CORPORATE';
+      document.getElementById('companyMeta').textContent = `M.Cap: ${stock.mcap_str || 'N/A'} | 52W High: ₹${high52} | RSI: ${stock.rsi || 'N/A'}`;
+
+      document.getElementById('cmpVal').textContent = `₹${cmp.toLocaleString('en-IN')}`;
+      document.getElementById('targetVal').textContent = `₹${target.toLocaleString('en-IN')}`;
+      document.getElementById('slVal').textContent = `₹${sl.toLocaleString('en-IN')}`;
+
+      let items = [];
+      if (isBank) {
+        items = [
+          { label: "1. Asset Quality (ROA ≥ 1.1%)", pass: roa !== null && roa >= 1.1, val: `ROA: ${stock.roa || 'N/A'}` },
+          { label: "2. Capital Compounding (ROE ≥ 13%)", pass: roe !== null && roe >= 13.0, val: `ROE: ${stock.roe || 'N/A'}` },
+          { label: "3. Valuation Multiple (P/B ≤ 2.5x)", pass: pb !== null && pb <= 2.5, val: `P/B: ${stock.pb || 'N/A'}` },
+          { label: "4. Operating Margin Cushion", pass: margin !== null && margin >= 15.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
+          { label: "5. Earnings Growth (P/E OK)", pass: pe !== null && pe <= 30.0, val: `P/E: ${stock.pe || 'N/A'}` },
+          { label: "6. Proximity to 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off High: -${stock.pct_off_52w}%` },
+          { label: "7. Moving Average Trend (Above 20 & 50 EMA)", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment" : "Consolidating" },
+          { label: "8. RSI Momentum in Healthy Zone (48 - 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` }
+        ];
+      } else {
+        items = [
+          { label: "1. Debt-to-Equity Balance Sheet Safety (≤ 0.5x)", pass: deVal !== null ? deVal <= 0.5 : true, val: `D/E: ${deVal !== null ? deVal + 'x' : '0.00x (Debt-Free)'}` },
+          { label: "2. High Return on Equity (ROE ≥ 14%)", pass: roe !== null && roe >= 14.0, val: `ROE: ${stock.roe || 'N/A'}` },
+          { label: "3. Net Profit Margin Strength (≥ 10%)", pass: margin !== null && margin >= 10.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
+          { label: "4. Solvency Cushion (Low Long-Term Debt)", pass: deVal !== null ? deVal <= 0.8 : true, val: `Total Debt: ${stock.total_debt || '₹0 Cr'}` },
+          { label: "5. Valuation Sanity (PEG ≤ 2.2 / P/E ≤ 42x)", pass: (peg !== null ? peg <= 2.2 : (pe !== null && pe <= 42)), val: `P/E: ${stock.pe || 'N/A'} | PEG: ${stock.peg || 'N/A'}` },
+          { label: "6. Proximity to 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off High: -${stock.pct_off_52w}%` },
+          { label: "7. Moving Average Trend (Above 20 & 50 EMA)", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment" : "Consolidating" },
+          { label: "8. RSI Momentum in Healthy Zone (48 - 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` }
+        ];
+      }
+
+      const passedCount = items.filter(i => i.pass).length;
+      document.getElementById('checklistItems').innerHTML = items.map(i => rowHtml(i.label, i.pass, i.val)).join('');
+      document.getElementById('scoreBadge').textContent = `${passedCount} / ${items.length} Passed`;
+
+      const verdictBox = document.getElementById('verdictBox');
+      if (passedCount >= 7 && stock.tech_match) {
+        verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+        verdictBox.innerHTML = '🟢 BUY';
+      } else if (passedCount >= 4) {
+        verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-yellow-500/20 text-yellow-300 border border-yellow-500/40";
+        verdictBox.innerHTML = '🟡 WAIT';
+      } else {
+        verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-rose-500/20 text-rose-300 border border-rose-500/40";
+        verdictBox.innerHTML = '🔴 SELL';
+      }
+    }
+
+    async function initChecklistPage() {
       try {
         const res = await fetch('results.json?v=' + new Date().getTime());
         const data = await res.json();
-        const list = data.all_scanned || [];
+        globalWatchlist = data.all_scanned || [];
+        if (globalWatchlist.length === 0) return;
+
+        const sel = document.getElementById('stockSelector');
+        sel.innerHTML = globalWatchlist.map(s => `
+          <option value="${s.symbol}">${s.symbol} (${s.conviction_tag || 'HOLD'})</option>
+        `).join('');
 
         const params = new URLSearchParams(window.location.search);
-        const urlSymbol = (params.get('symbol') || 'TCS').toUpperCase();
-        const stock = list.find(s => s.symbol.toUpperCase() === urlSymbol) || list[0];
-        if (!stock) return;
+        const urlSymbol = params.get('symbol');
 
-        const isBank = (stock.sector_type === 'BANK/NBFC' || stock.sector_type === 'BANK');
-        
-        // Clean D/E
-        let deVal = parseNum(stock.de);
-        if (deVal !== null && deVal > 1.5 && stock.symbol !== 'RELIANCE') {
-          deVal = parseFloat((deVal / 100).toFixed(2));
+        let targetStock = globalWatchlist[0];
+        if (urlSymbol) {
+          const match = globalWatchlist.find(s => s.symbol.toUpperCase() === urlSymbol.toUpperCase());
+          if (match) targetStock = match;
         }
 
-        const roe = parseNum(stock.roe);
-        const roa = parseNum(stock.roa);
-        const pb = parseNum(stock.pb);
-        const pe = parseNum(stock.pe);
-        const peg = parseNum(stock.peg);
-        const margin = parseNum(stock.net_margin);
-        const vol = parseNum(stock.vol_surge);
-        const rsi = parseNum(stock.rsi);
-        const pct52w = parseNum(stock.pct_off_52w);
-        const cmp = parseFloat(stock.price) || 0;
-        const high52 = parseFloat(stock.high_52w) || Math.round(cmp * 1.20);
-        const target = Math.max(high52, Math.round(cmp * 1.18));
-        const sl = Math.round(cmp * 0.94);
+        sel.value = targetStock.symbol;
+        renderStockDetails(targetStock);
 
-        // Populate Meta & Levels
-        document.getElementById('stockTitle').textContent = stock.symbol;
-        document.getElementById('sectorBadge').textContent = stock.sector_type || 'CORPORATE';
-        document.getElementById('companyMeta').textContent = `M.Cap: ${stock.mcap_str || 'N/A'} | 52W High: ₹${high52}`;
-
-        document.getElementById('cmpVal').textContent = `₹${cmp.toLocaleString('en-IN')}`;
-        document.getElementById('targetVal').textContent = `₹${target.toLocaleString('en-IN')}`;
-        document.getElementById('slVal').textContent = `₹${sl.toLocaleString('en-IN')}`;
-
-        // 8 Core Checklist Items
-        let items = [];
-        if (isBank) {
-          items = [
-            { label: "1. Asset Quality (ROA ≥ 1.1%)", pass: roa !== null && roa >= 1.1, val: `ROA: ${stock.roa || 'N/A'}` },
-            { label: "2. Capital Compounding (ROE ≥ 13%)", pass: roe !== null && roe >= 13.0, val: `ROE: ${stock.roe || 'N/A'}` },
-            { label: "3. Valuation Multiple (P/B ≤ 2.5x)", pass: pb !== null && pb <= 2.5, val: `P/B: ${stock.pb || 'N/A'}` },
-            { label: "4. Operating Margin Cushion", pass: margin !== null && margin >= 15.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
-            { label: "5. Earnings Growth (P/E OK)", pass: pe !== null && pe <= 30.0, val: `P/E: ${stock.pe || 'N/A'}` },
-            { label: "6. Proximity to 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off High: -${stock.pct_off_52w}%` },
-            { label: "7. Moving Average Trend (Above 20 & 50 EMA)", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment" : "Consolidating" },
-            { label: "8. RSI Momentum in Healthy Zone (48 - 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` }
-          ];
-        } else {
-          items = [
-            { label: "1. Debt-to-Equity Balance Sheet Safety (≤ 0.5x)", pass: deVal !== null ? deVal <= 0.5 : true, val: `D/E: ${deVal !== null ? deVal + 'x' : '0.00x (Debt-Free)'}` },
-            { label: "2. High Return on Equity (ROE ≥ 14%)", pass: roe !== null && roe >= 14.0, val: `ROE: ${stock.roe || 'N/A'}` },
-            { label: "3. Net Profit Margin Strength (≥ 10%)", pass: margin !== null && margin >= 10.0, val: `Margin: ${stock.net_margin || 'N/A'}` },
-            { label: "4. Solvency Cushion (Low Long-Term Debt)", pass: deVal !== null ? deVal <= 0.8 : true, val: `Total Debt: ${stock.total_debt || '₹0 Cr'}` },
-            { label: "5. Valuation Sanity (PEG ≤ 2.2 / P/E ≤ 42x)", pass: (peg !== null ? peg <= 2.2 : (pe !== null && pe <= 42)), val: `P/E: ${stock.pe || 'N/A'} | PEG: ${stock.peg || 'N/A'}` },
-            { label: "6. Proximity to 52-Week High (≤ 15% Dip)", pass: pct52w !== null && pct52w <= 15.0, val: `Off High: -${stock.pct_off_52w}%` },
-            { label: "7. Moving Average Trend (Above 20 & 50 EMA)", pass: Boolean(stock.tech_match), val: stock.tech_match ? "Bullish Alignment" : "Consolidating" },
-            { label: "8. RSI Momentum in Healthy Zone (48 - 72)", pass: rsi !== null && rsi >= 48 && rsi <= 72, val: `RSI: ${stock.rsi || 'N/A'}` }
-          ];
-        }
-
-        const passedCount = items.filter(i => i.pass).length;
-        document.getElementById('checklistItems').innerHTML = items.map(i => rowHtml(i.label, i.pass, i.val)).join('');
-        document.getElementById('scoreBadge').textContent = `${passedCount} / ${items.length} Passed`;
-
-        // Strictly BUY, WAIT, or SELL
-        const verdictBox = document.getElementById('verdictBox');
-        if (passedCount >= 7 && stock.tech_match) {
-          verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
-          verdictBox.innerHTML = '🟢 BUY';
-        } else if (passedCount >= 5) {
-          verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-yellow-500/20 text-yellow-300 border border-yellow-500/40";
-          verdictBox.innerHTML = '🟡 WAIT';
-        } else {
-          verdictBox.className = "inline-flex items-center gap-2 mt-1 px-5 py-2 rounded-xl text-lg font-black font-mono bg-rose-500/20 text-rose-300 border border-rose-500/40";
-          verdictBox.innerHTML = '🔴 SELL';
-        }
+        sel.addEventListener('change', () => {
+          const picked = globalWatchlist.find(s => s.symbol === sel.value);
+          if (picked) {
+            const newUrl = `${window.location.pathname}?symbol=${encodeURIComponent(picked.symbol)}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            renderStockDetails(picked);
+          }
+        });
 
       } catch (err) {
         console.error(err);
       }
     }
 
-    window.addEventListener('DOMContentLoaded', loadStockChecklist);
+    window.addEventListener('DOMContentLoaded', initChecklistPage);
   </script>
 </body>
 </html>
