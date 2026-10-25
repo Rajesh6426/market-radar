@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>High-Conviction Stock Radar</title>
+  <title>Market Momentum & Fundamental Radar</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -126,7 +126,7 @@
     </header>
 
     <div class="card">
-      <h2>🔥 High-Conviction Matches (Technical Breakout + Quality Fundamentals)</h2>
+      <h2>🔥 High-Conviction Matches (Technical Momentum + Strong Fundamentals)</h2>
       <div id="matches-table-container">Loading...</div>
     </div>
 
@@ -140,59 +140,71 @@
     fetch('results.json?v=' + new Date().getTime())
       .then(res => res.json())
       .then(data => {
-        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count} setups found)`;
+        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count || 0} setups found)`;
         
         const matchesContainer = document.getElementById('matches-table-container');
-        if (data.matches.length === 0) {
+        if (!data.matches || data.matches.length === 0) {
           matchesContainer.innerHTML = '<p style="color:#8b949e;">No setups met both strict momentum and fundamental conviction criteria today. Zero trade day.</p>';
         } else {
           matchesContainer.innerHTML = buildTable(data.matches);
         }
 
-        document.getElementById('all-table-container').innerHTML = buildTable(data.all_scanned);
+        document.getElementById('all-table-container').innerHTML = buildTable(data.all_scanned || []);
       })
       .catch(err => {
         document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting scan data...</p>';
       });
 
     function buildTable(list) {
-      let rows = list.map(item => `
-        <tr>
-          <td>
-            <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
-              ${item.symbol} ↗
-            </a>
-            <div style="margin-top: 3px;">
-              <span class="cap-badge">${item.cap_category}</span>
-            </div>
-          </td>
-          <td>
-            ₹${item.price}
-            <div class="subtext">${item.mcap_str}</div>
-          </td>
-          <td>
-            -${item.pct_off_52w}%
-            <div class="subtext">52W: ₹${item.high_52w}</div>
-          </td>
-          <td>
-            ${item.vol_surge}x
-            <div class="subtext">RSI: ${item.rsi}</div>
-          </td>
-          <td>
-            <div>P/E: <b>${item.pe}</b></div>
-            <div class="subtext">PEG: ${item.peg}</div>
-          </td>
-          <td>
-            <div>ROE: <b>${item.roe}</b></div>
-            <div class="subtext">${item.primary_metric_label}: ${item.primary_metric} | ${item.secondary_metric_label}: ${item.secondary_metric}</div>
-          </td>
-          <td>
-            <span class="badge ${item.matched ? 'badge-match' : (item.fund_strong ? 'badge-fund-good' : 'badge-neutral')}">
-              ${item.matched ? 'HIGH CONVICTION' : (item.fund_strong ? 'STRONG QUALITY' : 'NEUTRAL')}
-            </span>
-          </td>
-        </tr>
-      `).join('');
+      let rows = list.map(item => {
+        const capCategory = item.cap_category || 'Large-Cap';
+        const mcap = item.mcap_str || 'N/A';
+        const pe = item.pe || 'N/A';
+        const peg = item.peg || 'N/A';
+        const roe = item.roe || 'N/A';
+        const pLabel = item.primary_label || (item.sector_type === 'BANK' ? 'ROA' : 'D/E');
+        const pVal = item.primary_val || 'N/A';
+        const sLabel = item.secondary_label || (item.sector_type === 'BANK' ? 'P/B' : 'Margin');
+        const sVal = item.secondary_val || 'N/A';
+
+        return `
+          <tr>
+            <td>
+              <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
+                ${item.symbol} ↗
+              </a>
+              <div style="margin-top: 3px;">
+                <span class="cap-badge">${capCategory}</span>
+              </div>
+            </td>
+            <td>
+              ₹${item.price}
+              <div class="subtext">${mcap}</div>
+            </td>
+            <td>
+              -${item.pct_off_52w}%
+              <div class="subtext">52W: ₹${item.high_52w}</div>
+            </td>
+            <td>
+              ${item.vol_surge}x
+              <div class="subtext">RSI: ${item.rsi}</div>
+            </td>
+            <td>
+              <div>P/E: <b>${pe}</b></div>
+              <div class="subtext">PEG: ${peg}</div>
+            </td>
+            <td>
+              <div>ROE: <b>${roe}</b></div>
+              <div class="subtext">${pLabel}: ${pVal} | ${sLabel}: ${sVal}</div>
+            </td>
+            <td>
+              <span class="badge ${item.matched ? 'badge-match' : (item.fund_strong ? 'badge-fund-good' : 'badge-neutral')}">
+                ${item.matched ? 'HIGH CONVICTION' : (item.fund_strong ? 'STRONG QUALITY' : 'NEUTRAL')}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
 
       return `
         <table>

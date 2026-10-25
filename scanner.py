@@ -41,12 +41,10 @@ def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
 
 def classify_market_cap(mcap_raw):
   """Converts raw market cap to INR Crores and categorizes into Large, Mid, or Small Cap."""
-  if not mcap_raw:
-    return "N/A", "Unknown"
+  if not mcap_raw or mcap_raw <= 0:
+    return "N/A", "Cap N/A"
 
-  # Convert raw value (INR) to Crores (1 Cr = 10,000,000)
   mcap_cr = round(mcap_raw / 10000000, 1)
-
   if mcap_cr >= 20000:
     cap_type = "Large-Cap"
   elif mcap_cr >= 5000:
@@ -58,40 +56,46 @@ def classify_market_cap(mcap_raw):
 
 
 def evaluate_company_fundamentals(ticker_obj, symbol: str) -> dict:
-  """Sector-aware fundamental engine covering P/E, PEG, Market Cap, and sector-specific health."""
   try:
     info = ticker_obj.info or {}
 
-    # Market Cap & Valuation
+    # Market Cap (try fast_info fallback)
     raw_mcap = info.get("marketCap")
+    if not raw_mcap:
+      try:
+        raw_mcap = getattr(ticker_obj.fast_info, "market_cap", None)
+      except Exception:
+        raw_mcap = None
+
     mcap_str, cap_category = classify_market_cap(raw_mcap)
 
-    pe = info.get("trailingPE")
-    pe_val = round(pe, 1) if pe is not None and pe > 0 else None
+    # P/E Ratio (fallback to forwardPE if trailing is missing)
+    pe = info.get("trailingPE") or info.get("forwardPE")
+    pe_val = round(pe, 1) if (pe and pe > 0) else None
 
+    # PEG Ratio
     peg = info.get("pegRatio")
-    peg_val = round(peg, 2) if peg is not None and peg > 0 else None
+    peg_val = round(peg, 2) if (peg and peg > 0) else None
 
+    # ROE
     roe = info.get("returnOnEquity")
     roe_val = round(roe * 100, 1) if roe is not None else None
 
-    # Valuation check (Acceptable if PEG <= 2.0 or PEG not available with reasonable PE)
-    val_pass = (peg_val is not None and peg_val <= 2.2) or (
-        peg_val is None and pe_val is not None and pe_val <= 45
+    val_pass = (peg_val is not None and peg_val <= 2.5) or (
+        pe_val is not None and pe_val <= 50
     )
 
     if symbol in FINANCIAL_STOCKS:
-      # --- BANK / NBFC EVALUATION ---
+      # Banks / NBFCs
       roa = info.get("returnOnAssets")
       pb = info.get("priceToBook")
 
       roa_val = round(roa * 100, 2) if roa is not None else None
       pb_val = round(pb, 2) if pb is not None else None
 
-      # Benchmark: ROA >= 1.2%, ROE >= 14%
       bank_sound = (
-          (roa_val is not None and roa_val >= 1.2)
-          and (roe_val is not None and roe_val >= 14.0)
+          (roa_val is not None and roa_val >= 1.0)
+          and (roe_val is not None and roe_val >= 12.0)
           and val_pass
       )
 
@@ -102,15 +106,15 @@ def evaluate_company_fundamentals(ticker_obj, symbol: str) -> dict:
           "pe": f"{pe_val}x" if pe_val else "N/A",
           "peg": f"{peg_val}" if peg_val else "N/A",
           "roe": f"{roe_val}%" if roe_val else "N/A",
-          "primary_metric_label": "ROA",
-          "primary_metric": f"{roa_val}%" if roa_val else "N/A",
-          "secondary_metric_label": "P/B",
-          "secondary_metric": f"{pb_val}x" if pb_val else "N/A",
+          "primary_label": "ROA",
+          "primary_val": f"{roa_val}%" if roa_val else "N/A",
+          "secondary_label": "P/B",
+          "secondary_val": f"{pb_val}x" if pb_val else "N/A",
           "fund_strong": bool(bank_sound),
       }
 
     else:
-      # --- NON-FINANCIAL / CORPORATE EVALUATION ---
+      # Corporate / Non-Financials
       debt_to_eq = info.get("debtToEquity")
       margin = info.get("profitMargins")
 
@@ -123,11 +127,10 @@ def evaluate_company_fundamentals(ticker_obj, symbol: str) -> dict:
             else round(debt_to_eq, 2)
         )
 
-      # Benchmark: ROE >= 15%, D/E <= 1.0x, Margin >= 10%
       corp_sound = (
-          (roe_val is not None and roe_val >= 15.0)
-          and (de_val is not None and de_val <= 1.0)
-          and (pm_val is not None and pm_val >= 10.0)
+          (roe_val is not None and roe_val >= 14.0)
+          and (de_val is not None and de_val <= 1.2)
+          and (pm_val is not None and pm_val >= 8.0)
           and val_pass
       )
 
@@ -138,10 +141,10 @@ def evaluate_company_fundamentals(ticker_obj, symbol: str) -> dict:
           "pe": f"{pe_val}x" if pe_val else "N/A",
           "peg": f"{peg_val}" if peg_val else "N/A",
           "roe": f"{roe_val}%" if roe_val else "N/A",
-          "primary_metric_label": "D/E",
-          "primary_metric": f"{de_val}x" if de_val is not None else "N/A",
-          "secondary_metric_label": "Net Margin",
-          "secondary_metric": f"{pm_val}%" if pm_val else "N/A",
+          "primary_label": "D/E",
+          "primary_val": f"{de_val}x" if de_val is not None else "N/A",
+          "secondary_label": "Margin",
+          "secondary_val": f"{pm_val}%" if pm_val else "N/A",
           "fund_strong": bool(corp_sound),
       }
 
@@ -153,10 +156,10 @@ def evaluate_company_fundamentals(ticker_obj, symbol: str) -> dict:
         "pe": "N/A",
         "peg": "N/A",
         "roe": "N/A",
-        "primary_metric_label": "Metric",
-        "primary_metric": "N/A",
-        "secondary_metric_label": "Metric",
-        "secondary_metric": "N/A",
+        "primary_label": "D/E",
+        "primary_val": "N/A",
+        "secondary_label": "Margin",
+        "secondary_val": "N/A",
         "fund_strong": False,
     }
 
@@ -168,14 +171,13 @@ def run_scan():
   matches = []
   all_data = []
 
-  print(f"Starting comprehensive scan for {len(WATCHLIST)} symbols...")
+  print(f"Scanning {len(WATCHLIST)} stocks with complete metrics...")
 
   for ticker in WATCHLIST:
     symbol = ticker.replace(".NS", "")
     try:
       t = yf.Ticker(ticker)
 
-      # 1. Price Momentum History
       df = t.history(period="1y", interval="1d", auto_adjust=True)
       if df.empty or len(df) < 50:
         continue
@@ -200,7 +202,6 @@ def run_scan():
       high_52w = float(high.max())
       pct_off_52w = ((high_52w - curr_price) / high_52w) * 100.0
 
-      # Technical Breakout Filters
       above_mas = (curr_price > ema_20.iloc[-1]) and (
           curr_price > ema_50.iloc[-1]
       )
@@ -211,10 +212,7 @@ def run_scan():
           above_mas and volume_surge and rsi_valid and near_52w_high
       )
 
-      # 2. Sector-Aware Fundamental Analysis
       fund = evaluate_company_fundamentals(t, symbol)
-
-      # High-Conviction Match = Technicals + Fundamentals
       is_match = bool(tech_match and fund["fund_strong"])
 
       item = {
@@ -230,29 +228,26 @@ def run_scan():
           "peg": fund["peg"],
           "roe": fund["roe"],
           "sector_type": fund["sector_type"],
-          "primary_metric_label": fund["primary_metric_label"],
-          "primary_metric": fund["primary_metric"],
-          "secondary_metric_label": fund["secondary_metric_label"],
-          "secondary_metric": fund["secondary_metric"],
+          "primary_label": fund["primary_label"],
+          "primary_val": fund["primary_val"],
+          "secondary_label": fund["secondary_label"],
+          "secondary_val": fund["secondary_val"],
           "fund_strong": fund["fund_strong"],
           "tech_match": tech_match,
           "matched": is_match,
       }
       all_data.append(item)
 
-      if is_match:
-        matches.append(item)
-        print(f"[🔥 HIGH CONVICTION] {symbol:12} : Tech + Fundamentals ALIGNED")
-      elif tech_match:
-        print(
-            f"[⚠️ TECH ONLY]       {symbol:12} : Technical setup valid,"
-            " fundamentals pending"
-        )
-      else:
-        print(
-            f"[-]                 {symbol:12} : Neutral (Vol"
-            f" {vol_multiplier:.2f}x | RSI {curr_rsi:.1f})"
-        )
+      status_label = (
+          "[HIGH CONVICTION]"
+          if is_match
+          else (
+              "[FUND STRONG]"
+              if fund["fund_strong"]
+              else ("[TECH ONLY]" if tech_match else "[-]")
+          )
+      )
+      print(f"{status_label:18} {symbol:12} : {fund['mcap_str']} | P/E {fund['pe']}")
 
     except Exception as e:
       print(f"[!] Error on {symbol}: {e}")
@@ -270,8 +265,8 @@ def run_scan():
     json.dump(payload, f, indent=2)
 
   print(
-      f"\nScan complete at {timestamp_ist}. High Conviction Count:"
-      f" {len(matches)}"
+      f"\nScan completed at {timestamp_ist}. Total items written:"
+      f" {len(all_data)}"
   )
 
 
