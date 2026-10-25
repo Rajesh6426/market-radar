@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Momentum & Fundamental Radar</title>
+  <title>High-Conviction Stock Radar</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -20,24 +20,98 @@
       background-color: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 24px;
+      padding: 20px;
     }
     .container {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
     }
     header {
       border-bottom: 1px solid var(--border);
       padding-bottom: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     h1 {
       color: var(--text-white);
-      margin: 0 0 8px 0;
+      margin: 0 0 6px 0;
       font-size: 24px;
     }
     .timestamp {
       font-size: 13px;
+      color: #8b949e;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: #21262d;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      background: #30363d;
+    }
+    .tab-btn.active {
+      background: #1f6feb;
+      color: #fff;
+      border-color: #388bfd;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    h2 {
+      color: var(--text-white);
+      font-size: 17px;
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    th {
+      color: #8b949e;
+      font-weight: 600;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    a.symbol-link {
+      color: var(--link);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    a.symbol-link:hover {
+      text-decoration: underline;
+    }
+    .subtext {
+      font-size: 11px;
       color: #8b949e;
     }
     .badge {
@@ -70,158 +144,184 @@
       color: #8b949e;
       border: 1px solid var(--border);
     }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 24px;
-      overflow-x: auto;
+    .tab-content {
+      display: none;
     }
-    h2 {
-      color: var(--text-white);
-      font-size: 18px;
-      margin-top: 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-    }
-    th, td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-    th {
-      color: #8b949e;
-      font-weight: 600;
-      font-size: 11.5px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    a.symbol-link {
-      color: var(--link);
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-    a.symbol-link:hover {
-      text-decoration: underline;
-    }
-    .subtext {
-      font-size: 11px;
-      color: #8b949e;
+    .tab-content.active {
+      display: block;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>🎯 High-Conviction Stock Radar</h1>
+      <h1>🎯 High-Conviction Market Radar</h1>
       <div class="timestamp" id="last-updated">Checking latest cloud scan...</div>
     </header>
 
-    <div class="card">
-      <h2>🔥 High-Conviction Matches (Technical Momentum + Strong Fundamentals)</h2>
-      <div id="matches-table-container">Loading...</div>
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-overview')">⚡ Radar & Conviction</button>
+      <button class="tab-btn" onclick="switchTab('tab-pl')">📈 Profit & Loss Statement</button>
+      <button class="tab-btn" onclick="switchTab('tab-bs')">🏦 Balance Sheet & Cash</button>
+      <button class="tab-btn" onclick="switchTab('tab-ratios')">📐 Valuation & Key Ratios</button>
     </div>
 
-    <div class="card">
-      <h2>📊 All Monitored Watchlist (Valuation, Market Cap & Solvency)</h2>
-      <div id="all-table-container">Loading...</div>
+    <!-- TAB 1: RADAR OVERVIEW -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="card">
+        <h2>🔥 High-Conviction Matches (Momentum + Fundamentals)</h2>
+        <div id="matches-table-container">Loading...</div>
+      </div>
+      <div class="card">
+        <h2>📊 Watchlist Master Matrix</h2>
+        <div id="overview-table-container">Loading...</div>
+      </div>
+    </div>
+
+    <!-- TAB 2: PROFIT & LOSS -->
+    <div id="tab-pl" class="tab-content">
+      <div class="card">
+        <h2>📈 Income Statement: Top-Line & Bottom-Line Performance (Annual)</h2>
+        <div id="pl-table-container">Loading...</div>
+      </div>
+    </div>
+
+    <!-- TAB 3: BALANCE SHEET -->
+    <div id="tab-bs" class="tab-content">
+      <div class="card">
+        <h2>🏦 Balance Sheet: Assets, Equity & Debt Obligations (Annual)</h2>
+        <div id="bs-table-container">Loading...</div>
+      </div>
+    </div>
+
+    <!-- TAB 4: RATIOS & VALUATION -->
+    <div id="tab-ratios" class="tab-content">
+      <div class="card">
+        <h2>📐 Comprehensive Valuation, Efficiency & Solvency Ratios</h2>
+        <div id="ratios-table-container">Loading...</div>
+      </div>
     </div>
   </div>
 
   <script>
+    let globalData = [];
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
     fetch('results.json?v=' + new Date().getTime())
       .then(res => res.json())
       .then(data => {
         document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count || 0} setups found)`;
-        
+        globalData = data.all_scanned || [];
+
+        // 1. Render Matches
         const matchesContainer = document.getElementById('matches-table-container');
         if (!data.matches || data.matches.length === 0) {
           matchesContainer.innerHTML = '<p style="color:#8b949e;">No setups met both strict momentum and fundamental conviction criteria today. Zero trade day.</p>';
         } else {
-          matchesContainer.innerHTML = buildTable(data.matches);
+          matchesContainer.innerHTML = buildOverviewTable(data.matches);
         }
 
-        document.getElementById('all-table-container').innerHTML = buildTable(data.all_scanned || []);
+        // 2. Render Overview
+        document.getElementById('overview-table-container').innerHTML = buildOverviewTable(globalData);
+
+        // 3. Render P&L
+        document.getElementById('pl-table-container').innerHTML = buildPLTable(globalData);
+
+        // 4. Render Balance Sheet
+        document.getElementById('bs-table-container').innerHTML = buildBSTable(globalData);
+
+        // 5. Render Ratios
+        document.getElementById('ratios-table-container').innerHTML = buildRatiosTable(globalData);
       })
       .catch(err => {
         document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting scan data...</p>';
       });
 
-    function buildTable(list) {
-      let rows = list.map(item => {
-        const capCategory = item.cap_category || 'Large-Cap';
-        const mcap = item.mcap_str || 'N/A';
-        const pe = item.pe || 'N/A';
-        const peg = item.peg || 'N/A';
-        const roe = item.roe || 'N/A';
-        const pLabel = item.primary_label || (item.sector_type === 'BANK' ? 'ROA' : 'D/E');
-        const pVal = item.primary_val || 'N/A';
-        const sLabel = item.secondary_label || (item.sector_type === 'BANK' ? 'P/B' : 'Margin');
-        const sVal = item.secondary_val || 'N/A';
-
-        return `
-          <tr>
-            <td>
-              <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
-                ${item.symbol} ↗
-              </a>
-              <div style="margin-top: 3px;">
-                <span class="cap-badge">${capCategory}</span>
-              </div>
-            </td>
-            <td>
-              ₹${item.price}
-              <div class="subtext">${mcap}</div>
-            </td>
-            <td>
-              -${item.pct_off_52w}%
-              <div class="subtext">52W: ₹${item.high_52w}</div>
-            </td>
-            <td>
-              ${item.vol_surge}x
-              <div class="subtext">RSI: ${item.rsi}</div>
-            </td>
-            <td>
-              <div>P/E: <b>${pe}</b></div>
-              <div class="subtext">PEG: ${peg}</div>
-            </td>
-            <td>
-              <div>ROE: <b>${roe}</b></div>
-              <div class="subtext">${pLabel}: ${pVal} | ${sLabel}: ${sVal}</div>
-            </td>
-            <td>
-              <span class="badge ${item.matched ? 'badge-match' : (item.fund_strong ? 'badge-fund-good' : 'badge-neutral')}">
-                ${item.matched ? 'HIGH CONVICTION' : (item.fund_strong ? 'STRONG QUALITY' : 'NEUTRAL')}
-              </span>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
+    function getSymbolCell(item) {
       return `
-        <table>
-          <thead>
-            <tr>
-              <th>Stock</th>
-              <th>Price & M.Cap</th>
-              <th>From 52W High</th>
-              <th>Technicals</th>
-              <th>Valuation (P/E & PEG)</th>
-              <th>Quality & Solvency</th>
-              <th>Conviction</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <td>
+          <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
+            ${item.symbol} ↗
+          </a>
+          <div style="margin-top: 3px;">
+            <span class="cap-badge">${item.cap_category || 'Large-Cap'}</span>
+          </div>
+        </td>
       `;
+    }
+
+    function buildOverviewTable(list) {
+      let rows = list.map(item => `
+        <tr>
+          ${getSymbolCell(item)}
+          <td>₹${item.price}<div class="subtext">${item.mcap_str || 'N/A'}</div></td>
+          <td>-${item.pct_off_52w}%<div class="subtext">52W: ₹${item.high_52w}</div></td>
+          <td>${item.vol_surge}x<div class="subtext">RSI: ${item.rsi}</div></td>
+          <td><div>P/E: <b>${item.pe || 'N/A'}</b></div><div class="subtext">PEG: ${item.peg || 'N/A'}</div></td>
+          <td><div>ROE: <b>${item.roe || 'N/A'}</b></div><div class="subtext">${item.primary_label}: ${item.primary_val} | ${item.secondary_label}: ${item.secondary_val}</div></td>
+          <td>
+            <span class="badge ${item.matched ? 'badge-match' : (item.fund_strong ? 'badge-fund-good' : 'badge-neutral')}">
+              ${item.matched ? 'HIGH CONVICTION' : (item.fund_strong ? 'STRONG QUALITY' : 'NEUTRAL')}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+
+      return `<table><thead><tr><th>Stock</th><th>Price & M.Cap</th><th>From 52W</th><th>Technicals</th><th>Valuation</th><th>Quality</th><th>Conviction</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    function buildPLTable(list) {
+      let rows = list.map(item => `
+        <tr>
+          ${getSymbolCell(item)}
+          <td><b>${item.revenue || 'N/A'}</b></td>
+          <td>${item.op_profit || 'N/A'}</td>
+          <td><b style="color: #58a6ff;">${item.pat || 'N/A'}</b></td>
+          <td>${item.net_margin || 'N/A'}</td>
+          <td>${item.mcap_str || 'N/A'}</td>
+        </tr>
+      `).join('');
+
+      return `<table><thead><tr><th>Stock</th><th>Total Revenue (Sales)</th><th>Operating Profit / EBITDA</th><th>Net Profit (PAT)</th><th>Net Profit Margin</th><th>Market Cap</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    function buildBSTable(list) {
+      let rows = list.map(item => `
+        <tr>
+          ${getSymbolCell(item)}
+          <td><b>${item.total_assets || 'N/A'}</b></td>
+          <td>${item.total_equity || 'N/A'}</td>
+          <td><span style="color: ${item.total_debt === 'N/A' || item.total_debt === '₹0 Cr' ? '#3fb950' : '#e3b341'}">${item.total_debt || 'N/A'}</span></td>
+          <td>${item.cash || 'N/A'}</td>
+          <td>${item.de || 'N/A'}</td>
+        </tr>
+      `).join('');
+
+      return `<table><thead><tr><th>Stock</th><th>Total Assets</th><th>Total Equity (Net Worth)</th><th>Total Debt</th><th>Cash & Equiv.</th><th>Debt-to-Equity</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    function buildRatiosTable(list) {
+      let rows = list.map(item => `
+        <tr>
+          ${getSymbolCell(item)}
+          <td><b>${item.pe || 'N/A'}</b></td>
+          <td>${item.forward_pe || 'N/A'}</td>
+          <td>${item.peg || 'N/A'}</td>
+          <td>${item.pb || 'N/A'}</td>
+          <td><span style="color:#3fb950;"><b>${item.roe || 'N/A'}</b></span></td>
+          <td>${item.roa || 'N/A'}</td>
+        </tr>
+      `).join('');
+
+      return `<table><thead><tr><th>Stock</th><th>Trailing P/E</th><th>Forward P/E</th><th>PEG Ratio</th><th>Price-to-Book (P/B)</th><th>ROE</th><th>ROA</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   </script>
 </body>
