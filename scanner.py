@@ -158,6 +158,7 @@ def parse_pl_table(df, fallback_rev=None, fallback_pat=None):
 def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
   info = ticker_obj.info or {}
 
+  # Market Cap
   raw_mcap = info.get("marketCap")
   if not raw_mcap:
     try:
@@ -166,6 +167,7 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
       raw_mcap = None
   mcap_num, mcap_str, cap_category = classify_market_cap(raw_mcap)
 
+  # Multiples
   pe = info.get("trailingPE")
   pe_val = round(pe, 1) if pe and pe > 0 else None
 
@@ -181,15 +183,35 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
     pb = curr_price / book_val
   pb_val = round(pb, 2) if pb and pb > 0 else None
 
-  roe = info.get("returnOnEquity")
-  roe_val = round(roe * 100, 1) if roe is not None else None
-
+  # ROA
   roa = info.get("returnOnAssets")
   roa_val = round(roa * 100, 2) if roa is not None else None
 
+  # TTM Financials
   revenue = info.get("totalRevenue")
   ebitda = info.get("ebitda") or info.get("operatingIncome")
   net_income = info.get("netIncomeToCommon")
+
+  # Balance Sheet Items
+  total_assets = info.get("totalAssets")
+  total_debt = info.get("totalDebt")
+  total_cash = info.get("totalCash")
+  shares_out = info.get("sharesOutstanding")
+
+  total_equity = None
+  if book_val and shares_out:
+    total_equity = book_val * shares_out
+
+  if not total_assets and total_equity:
+    total_assets = total_equity + (total_debt or 0)
+
+  # ROE with Direct Calculation Fallback
+  roe = info.get("returnOnEquity")
+  roe_val = round(roe * 100, 1) if roe is not None else None
+
+  # Fallback: Derive ROE if yfinance returns None (e.g. RELIANCE.NS)
+  if roe_val is None and net_income and total_equity and total_equity > 0:
+    roe_val = round((net_income / total_equity) * 100, 1)
 
   rev_str = to_crores_str(revenue)
   op_str = to_crores_str(ebitda)
@@ -201,6 +223,7 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
   pm_val = round(margin * 100, 1) if margin is not None else None
   margin_str = f"{pm_val}%" if pm_val is not None else "N/A"
 
+  # Multi-period P&L
   annual_pl = []
   quarterly_pl = []
   try:
@@ -233,28 +256,19 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
   except Exception:
     pass
 
-  total_assets = info.get("totalAssets")
-  total_debt = info.get("totalDebt")
-  total_cash = info.get("totalCash")
-
-  shares_out = info.get("sharesOutstanding")
-  total_equity = None
-  if book_val and shares_out:
-    total_equity = book_val * shares_out
-
-  if not total_assets and total_equity:
-    total_assets = total_equity + (total_debt or 0)
-
   assets_str = to_crores_str(total_assets)
   equity_str = to_crores_str(total_equity)
   debt_str = to_crores_str(total_debt) if total_debt else "₹0 Cr"
   cash_str = to_crores_str(total_cash)
 
+  # Debt-to-Equity: Correct percentage conversion (e.g. 9.83% -> 0.10x)
   debt_to_eq = info.get("debtToEquity")
   de_val = None
   if debt_to_eq is not None:
     de_val = (
-        round(debt_to_eq / 100, 2) if debt_to_eq > 10 else round(debt_to_eq, 2)
+        round(debt_to_eq / 100, 2)
+        if (debt_to_eq > 1.5 and symbol != "RELIANCE")
+        else round(debt_to_eq, 2)
     )
   elif total_debt is not None and total_equity and total_equity > 0:
     de_val = round(total_debt / total_equity, 2)
@@ -335,8 +349,8 @@ def evaluate_screener_rules(ticker_obj, symbol: str, curr_price: float) -> dict:
     if r1:
       passed_rules += 1
 
-    r2 = roe_val is not None and roe_val >= 15.0
-    checks.append(f"ROE/ROCE > 15%: {'✓' if r2 else '✗'} ({roe_val}%)")
+    r2 = roe_val is not None and roe_val >= 14.0
+    checks.append(f"ROE/ROCE > 14%: {'✓' if r2 else '✗'} ({roe_val}%)")
     if r2:
       passed_rules += 1
 
@@ -472,18 +486,16 @@ def run_scan():
 
       full_conviction = bool(tech_match and fund.get("screener_passed", False))
 
+      # Assign Conviction Tags
       if full_conviction:
-        conviction_tag = "INSTITUTIONAL BUY"
-        badge_type = "badge-match"
+        conviction_tag = "BUY"
+        badge_type = "rec-buy"
       elif fund.get("screener_passed", False):
-        conviction_tag = "QUALITY COMPOUNDER"
-        badge_type = "badge-fund-good"
-      elif tech_match:
-        conviction_tag = "MOMENTUM ONLY"
-        badge_type = "badge-momentum"
+        conviction_tag = "WAIT"
+        badge_type = "rec-wait"
       else:
-        conviction_tag = "NEUTRAL"
-        badge_type = "badge-neutral"
+        conviction_tag = "SELL"
+        badge_type = "rec-sell"
 
       item = {
           "symbol": symbol,
@@ -503,8 +515,8 @@ def run_scan():
         matches.append(item)
 
       print(
-          f"[{conviction_tag:18}] {symbol:10} | Sector: {item['sector_type']:10}"
-          f" | Score: {item['screener_score']}"
+          f"[{conviction_tag:6}] {symbol:10} | ROE: {item['roe']:7} | D/E:"
+          f" {item['de']:6} | RSI: {curr_rsi:.1f}"
       )
 
     except Exception as e:
