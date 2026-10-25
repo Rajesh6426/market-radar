@@ -40,61 +40,87 @@ def classify_market_cap(mcap_raw):
         cap_type = "Small-Cap"
     return f"₹{mcap_cr:,.0f} Cr", cap_type
 
-def parse_pl_table(df):
-    """Parses a financials DataFrame into a list of period objects (Revenue, EBITDA, PAT, Margin)."""
+def parse_pl_table(df, fallback_rev=None, fallback_pat=None):
+    """Accurately extracts multi-period Top-line Revenue, Operating Profit, PAT, and Margin."""
     periods = []
-    if df is None or df.empty:
+    if df is None or not isinstance(df, pd.DataFrame) or df.empty:
         return periods
 
-    cols = list(df.columns)[:4]  # Up to 4 most recent periods
-    for col in cols:
-        label = col.strftime('%b %Y') if hasattr(col, 'strftime') else str(col)[:10]
+    try:
+        cols = list(df.columns)[:4]
+        
+        def get_best_row(preferred_keys):
+            for target in preferred_keys:
+                for idx in df.index:
+                    s_clean = str(idx).strip().lower()
+                    if s_clean == target.lower():
+                        return idx
+            for target in preferred_keys:
+                for idx in df.index:
+                    s_clean = str(idx).strip().lower()
+                    if s_clean.startswith(target.lower()):
+                        return idx
+            return None
 
-        # 1. Total Revenue
-        rev = None
-        rev_keys = [k for k in df.index if "Total Revenue" in str(k) or "Operating Revenue" in str(k) or "Interest Income" in str(k)]
-        if rev_keys:
-            rev = df.loc[rev_keys[0], col]
-            if isinstance(rev, pd.Series):
-                rev = rev.iloc[0]
+        rev_key = get_best_row(["Total Revenue", "Operating Revenue", "TotalRevenue", "Interest Income"])
+        op_key = get_best_row(["Operating Income", "EBITDA", "EBIT", "Total Operating Income"])
+        pat_key = get_best_row(["Net Income Common Stockholders", "Net Income", "Net Income Continuous Operations", "Diluted NI"])
 
-        # 2. Operating Profit / EBITDA
-        ebitda = None
-        eb_keys = [k for k in df.index if "EBITDA" in str(k) or "Operating Income" in str(k)]
-        if eb_keys:
-            ebitda = df.loc[eb_keys[0], col]
-            if isinstance(ebitda, pd.Series):
-                ebitda = ebitda.iloc[0]
+        for col in cols:
+            label = col.strftime('%b %Y') if hasattr(col, 'strftime') else str(col)[:10]
 
-        # 3. Net Income (PAT)
-        pat = None
-        pat_keys = [k for k in df.index if "Net Income Common Stockholders" in str(k) or "Net Income" in str(k)]
-        if pat_keys:
-            pat = df.loc[pat_keys[0], col]
-            if isinstance(pat, pd.Series):
-                pat = pat.iloc[0]
+            # 1. Total Revenue
+            rev_val = None
+            if rev_key is not None:
+                val = df.loc[rev_key, col]
+                rev_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
 
-        # 4. Margin
-        margin_str = "N/A"
-        try:
-            if rev and pat and float(rev) > 0:
-                m_val = round((float(pat) / float(rev)) * 100, 1)
-                margin_str = f"{m_val}%"
-        except Exception:
-            pass
+            # 2. Operating Profit
+            op_val = None
+            if op_key is not None:
+                val = df.loc[op_key, col]
+                op_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
 
-        periods.append({
-            "period": label,
-            "revenue": to_crores_str(rev),
-            "op_profit": to_crores_str(ebitda),
-            "pat": to_crores_str(pat),
-            "margin": margin_str
-        })
+            # 3. Net Profit (PAT)
+            pat_val = None
+            if pat_key is not None:
+                val = df.loc[pat_key, col]
+                pat_val = val.iloc[0] if isinstance(val, (pd.Series, list)) else val
+
+            # Fallbacks if index didn't resolve correctly on the latest column
+            if rev_val is None and col == cols[0] and fallback_rev:
+                rev_val = fallback_rev
+            if pat_val is None and col == cols[0] and fallback_pat:
+                pat_val = fallback_pat
+
+            margin_str = "N/A"
+            try:
+                if rev_val is not None and pat_val is not None and not pd.isna(rev_val) and not pd.isna(pat_val):
+                    r_f = float(rev_val)
+                    p_f = float(pat_val)
+                    if r_f > 0:
+                        m_val = round((p_f / r_f) * 100, 1)
+                        if -100 <= m_val <= 100:
+                            margin_str = f"{m_val}%"
+            except Exception:
+                pass
+
+            periods.append({
+                "period": label,
+                "revenue": to_crores_str(rev_val),
+                "op_profit": to_crores_str(op_val),
+                "pat": to_crores_str(pat_val),
+                "margin": margin_str
+            })
+    except Exception as e:
+        print(f"Error parsing financial table: {e}")
+
     return periods
 
 def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     info = ticker_obj.info or {}
 
+    # Market Cap
     raw_mcap = info.get('marketCap')
     if not raw_mcap:
         try:
@@ -103,6 +129,7 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
             raw_mcap = None
     mcap_str, cap_category = classify_market_cap(raw_mcap)
 
+    # Ratios
     pe = info.get('trailingPE')
     pe_val = round(pe, 1) if pe and pe > 0 else None
     
@@ -124,7 +151,7 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     roa = info.get('returnOnAssets')
     roa_val = round(roa * 100, 2) if roa is not None else None
 
-    # TTM headline numbers
+    # TTM P&L
     revenue = info.get('totalRevenue')
     ebitda = info.get('ebitda') or info.get('operatingIncome')
     net_income = info.get('netIncomeToCommon')
@@ -139,11 +166,11 @@ def extract_financials(ticker_obj, symbol: str, curr_price: float) -> dict:
     pm_val = round(margin * 100, 1) if margin is not None else None
     margin_str = f"{pm_val}%" if pm_val is not None else "N/A"
 
-    # Multi-period P&L extraction
+    # Multi-period P&L
     annual_pl = []
     quarterly_pl = []
     try:
-        annual_pl = parse_pl_table(ticker_obj.financials)
+        annual_pl = parse_pl_table(ticker_obj.financials, revenue, net_income)
     except Exception:
         pass
 
@@ -227,7 +254,7 @@ def run_scan():
     matches = []
     all_data = []
 
-    print(f"Scanning {len(WATCHLIST)} symbols for Multi-Year & Quarterly Statements...")
+    print(f"Scanning {len(WATCHLIST)} symbols for Complete Radar & Statements...")
 
     for ticker in WATCHLIST:
         symbol = ticker.replace(".NS", "")
@@ -281,7 +308,7 @@ def run_scan():
             if is_match:
                 matches.append(item)
 
-            print(f"[✓] {symbol:10} | Annual Periods: {len(fund['annual_pl'])} | Quarterly Periods: {len(fund['quarterly_pl'])}")
+            print(f"[✓] {symbol:10} | Annual: {len(fund['annual_pl'])} | Qtr: {len(fund['quarterly_pl'])} | Rev: {fund['revenue']} | PAT: {fund['pat']}")
 
         except Exception as e:
             print(f"[!] Error on {symbol}: {e}")
@@ -298,7 +325,7 @@ def run_scan():
     with open("results.json", "w") as f:
         json.dump(payload, f, indent=2)
 
-    print(f"\nScan complete at {timestamp_ist}.")
+    print(f"\nScan completed at {timestamp_ist}. Total items: {len(all_data)}")
 
 if __name__ == "__main__":
     run_scan()

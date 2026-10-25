@@ -163,11 +163,6 @@
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .period-col {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
   </style>
 </head>
 <body>
@@ -316,7 +311,6 @@
           `;
         }
 
-        // Render columns for each period
         let cells = periods.map(p => `
           <td>
             <div style="font-weight: 600; color: #f0f6fc;">${p.revenue}</div>
@@ -332,7 +326,6 @@
         `;
       }).join('');
 
-      // Build header dynamically using the first available period list
       let samplePeriods = [];
       for (let s of globalData) {
         let pList = isAnnual ? s.annual_pl : s.quarterly_pl;
