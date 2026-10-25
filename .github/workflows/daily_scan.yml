@@ -4,7 +4,7 @@ on:
   schedule:
     # 10:30 AM UTC = 4:00 PM IST (Mon to Fri)
     - cron: '30 10 * * 1-5'
-  workflow_dispatch: # Allows manual run anytime from GitHub
+  workflow_dispatch:
 
 jobs:
   scan-and-publish:
@@ -33,6 +33,7 @@ jobs:
         run: |
           git config --global user.name "MarketRadarBot"
           git config --global user.email "bot@github.com"
+          git pull --rebase origin main || true
           git add results.json
           git commit -m "Auto-update market radar results [skip ci]" || echo "No changes to commit"
-          git push
+          git push origin main
