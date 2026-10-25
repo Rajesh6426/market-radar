@@ -42,6 +42,7 @@
     }
     .nav-tabs {
       display: flex;
+      align-items: center;
       gap: 10px;
       margin-bottom: 20px;
       border-bottom: 1px solid var(--border);
@@ -196,7 +197,9 @@
       <button class="tab-btn active" onclick="switchTab('tab-overview', event)">⚡ Radar & Conviction</button>
       <button class="tab-btn" onclick="switchTab('tab-pl', event)">📈 Profit & Loss Statement</button>
       <button class="tab-btn" onclick="switchTab('tab-bs', event)">🏦 Balance Sheet & Cash</button>
-      <button class="tab-btn" onclick="switchTab('tab-ratios', event)">📐 Valuation & Key Ratios</button>
+      <a href="stock_buying_decision_terminal.html" target="_blank" class="tab-btn" style="text-decoration: none; background: #238636; border-color: #2ea043; color: white; margin-left: auto;">
+        📋 Pre-Trade Terminal ↗
+      </a>
     </div>
 
     <!-- TAB 1: RADAR OVERVIEW -->
@@ -228,14 +231,6 @@
       <div class="card">
         <h2>🏦 Balance Sheet: Assets, Equity & Debt Obligations</h2>
         <div id="bs-table-container">Loading...</div>
-      </div>
-    </div>
-
-    <!-- TAB 4: RATIOS & VALUATION -->
-    <div id="tab-ratios" class="tab-content">
-      <div class="card">
-        <h2>📐 Comprehensive Valuation, Efficiency & Solvency Ratios</h2>
-        <div id="ratios-table-container">Loading...</div>
       </div>
     </div>
   </div>
@@ -275,19 +270,26 @@
         document.getElementById('overview-table-container').innerHTML = buildOverviewTable(globalData);
         renderPLTable();
         document.getElementById('bs-table-container').innerHTML = buildBSTable(globalData);
-        document.getElementById('ratios-table-container').innerHTML = buildRatiosTable(globalData);
       })
       .catch(err => {
         document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting scan data...</p>';
       });
 
     function getSymbolCell(item) {
+      const sectorParam = (item.sector_type === 'BANK/NBFC' || item.sector_type === 'BANK') ? 'bank' : 'general';
+      const terminalUrl = `stock_buying_decision_terminal.html?symbol=${encodeURIComponent(item.symbol)}&cmp=${encodeURIComponent(item.price)}&sector=${sectorParam}&exchange=NSE`;
+
       return `
         <td>
-          <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
-            ${item.symbol} ↗
-          </a>
-          <div style="margin-top: 3px; display: flex; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <a class="symbol-link" href="https://in.tradingview.com/chart/?symbol=NSE%3A${item.symbol}" target="_blank" rel="noopener noreferrer">
+              ${item.symbol} ↗
+            </a>
+            <a href="${terminalUrl}" target="_blank" title="Open Pre-Trade Terminal" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #1f6feb; color: white; text-decoration: none; font-weight: 600;">
+              Checklist 📋
+            </a>
+          </div>
+          <div style="margin-top: 4px; display: flex; gap: 4px;">
             <span class="cap-badge">${item.cap_category || 'Large-Cap'}</span>
             <span class="cap-badge">${item.sector_type || 'CORPORATE'}</span>
           </div>
@@ -392,22 +394,6 @@
       `).join('');
 
       return `<table><thead><tr><th>Stock</th><th>Total Assets</th><th>Total Equity (Net Worth)</th><th>Total Debt</th><th>Cash & Equiv.</th><th>Debt-to-Equity</th></tr></thead><tbody>${rows}</tbody></table>`;
-    }
-
-    function buildRatiosTable(list) {
-      let rows = list.map(item => `
-        <tr>
-          ${getSymbolCell(item)}
-          <td><b>${item.pe || 'N/A'}</b></td>
-          <td>${item.forward_pe || 'N/A'}</td>
-          <td>${item.peg || 'N/A'}</td>
-          <td>${item.pb || 'N/A'}</td>
-          <td><span style="color:#3fb950;"><b>${item.roe || 'N/A'}</b></span></td>
-          <td>${item.roa || 'N/A'}</td>
-        </tr>
-      `).join('');
-
-      return `<table><thead><tr><th>Stock</th><th>Trailing P/E</th><th>Forward P/E</th><th>PEG Ratio</th><th>Price-to-Book (P/B)</th><th>ROE</th><th>ROA</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   </script>
 </body>
