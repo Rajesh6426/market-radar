@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-25 02:57 PM IST",
+  "last_updated": "2026-10-25 03:04 PM IST",
   "total_scanned": 19,
   "match_count": 0,
   "matches": [],
@@ -31,6 +31,66 @@
       "op_profit": "\u20b9180,717 Cr",
       "pat": "\u20b974,727 Cr",
       "net_margin": "6.6%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-10,971 Cr",
+          "op_profit": "\u20b9202,076 Cr",
+          "pat": "\u20b980,775 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9-10,001 Cr",
+          "op_profit": "\u20b9179,871 Cr",
+          "pat": "\u20b969,648 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9-11,190 Cr",
+          "op_profit": "\u20b9175,288 Cr",
+          "pat": "\u20b969,621 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b9-7,842 Cr",
+          "op_profit": "\u20b9154,765 Cr",
+          "pat": "\u20b966,284 Cr",
+          "margin": "N/A"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-8,337 Cr",
+          "op_profit": "\u20b938,967 Cr",
+          "pat": "\u20b920,946 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-6,585 Cr",
+          "op_profit": "\u20b933,780 Cr",
+          "pat": "\u20b916,971 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-6,613 Cr",
+          "op_profit": "\u20b936,310 Cr",
+          "pat": "\u20b918,645 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-7,036 Cr",
+          "op_profit": "\u20b944,182 Cr",
+          "pat": "\u20b926,994 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "N/A",
       "total_equity": "N/A",
       "total_debt": "\u20b9502,514 Cr",
@@ -63,6 +123,66 @@
       "op_profit": "\u20b972,851 Cr",
       "pat": "\u20b951,608 Cr",
       "net_margin": "18.2%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b92,627 Cr",
+          "op_profit": "\u20b975,940 Cr",
+          "pat": "\u20b949,210 Cr",
+          "margin": "1873.2%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b92,500 Cr",
+          "op_profit": "\u20b971,193 Cr",
+          "pat": "\u20b948,553 Cr",
+          "margin": "1942.1%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b93,003 Cr",
+          "op_profit": "\u20b968,506 Cr",
+          "pat": "\u20b945,908 Cr",
+          "margin": "1528.7%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b92,469 Cr",
+          "op_profit": "\u20b962,600 Cr",
+          "pat": "\u20b942,147 Cr",
+          "margin": "1707.0%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Sep 2026",
+          "revenue": "\u20b9-252 Cr",
+          "op_profit": "\u20b920,152 Cr",
+          "pat": "\u20b913,884 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-273 Cr",
+          "op_profit": "\u20b920,124 Cr",
+          "pat": "\u20b913,349 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-265 Cr",
+          "op_profit": "\u20b920,033 Cr",
+          "pat": "\u20b913,718 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9270 Cr",
+          "op_profit": "\u20b919,160 Cr",
+          "pat": "\u20b910,657 Cr",
+          "margin": "3947.0%"
+        }
+      ],
       "total_assets": "N/A",
       "total_equity": "N/A",
       "total_debt": "\u20b911,808 Cr",
@@ -95,6 +215,66 @@
       "op_profit": "\u20b9460 Cr",
       "pat": "\u20b9330 Cr",
       "net_margin": "16.2%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b930 Cr",
+          "op_profit": "\u20b9501 Cr",
+          "pat": "\u20b9331 Cr",
+          "margin": "1089.8%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b930 Cr",
+          "op_profit": "\u20b9501 Cr",
+          "pat": "\u20b9316 Cr",
+          "margin": "1066.9%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b943 Cr",
+          "op_profit": "\u20b9492 Cr",
+          "pat": "\u20b9317 Cr",
+          "margin": "734.8%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b919 Cr",
+          "op_profit": "\u20b9462 Cr",
+          "pat": "\u20b9298 Cr",
+          "margin": "1560.7%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b96 Cr",
+          "op_profit": "\u20b9128 Cr",
+          "pat": "\u20b982 Cr",
+          "margin": "1489.1%"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-1 Cr",
+          "op_profit": "\u20b9133 Cr",
+          "pat": "\u20b992 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b96 Cr",
+          "op_profit": "\u20b9115 Cr",
+          "pat": "\u20b975 Cr",
+          "margin": "1333.9%"
+        },
+        {
+          "period": "Sep 2025",
+          "revenue": "\u20b97 Cr",
+          "op_profit": "\u20b9129 Cr",
+          "pat": "\u20b984 Cr",
+          "margin": "1165.3%"
+        }
+      ],
       "total_assets": "\u20b997,538 Cr",
       "total_equity": "\u20b997,449 Cr",
       "total_debt": "\u20b989 Cr",
@@ -127,6 +307,52 @@
       "op_profit": "N/A",
       "pat": "\u20b980,102 Cr",
       "net_margin": "26.5%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9149,977 Cr",
+          "op_profit": "\u20b9-3,679 Cr",
+          "pat": "\u20b970,479 Cr",
+          "margin": "47.0%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9140,449 Cr",
+          "op_profit": "\u20b9-6,295 Cr",
+          "pat": "\u20b967,351 Cr",
+          "margin": "48.0%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9124,800 Cr",
+          "op_profit": "\u20b9-7,917 Cr",
+          "pat": "\u20b962,266 Cr",
+          "margin": "49.9%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b991,399 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b949,545 Cr",
+          "margin": "54.2%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b939,663 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b916,258 Cr",
+          "margin": "41.0%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b927,768 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b915,394 Cr",
+          "margin": "55.4%"
+        }
+      ],
       "total_assets": "\u20b91,203,286 Cr",
       "total_equity": "\u20b9609,142 Cr",
       "total_debt": "\u20b9594,144 Cr",
@@ -159,6 +385,66 @@
       "op_profit": "N/A",
       "pat": "\u20b959,066 Cr",
       "net_margin": "27.8%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9106,190 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b954,208 Cr",
+          "margin": "51.0%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b997,304 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b951,029 Cr",
+          "margin": "52.4%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b985,408 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b944,256 Cr",
+          "margin": "51.8%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b970,523 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b934,037 Cr",
+          "margin": "48.3%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b929,177 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b915,440 Cr",
+          "margin": "52.9%"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b927,547 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b914,755 Cr",
+          "margin": "53.6%"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b926,490 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b912,538 Cr",
+          "margin": "47.3%"
+        },
+        {
+          "period": "Sep 2025",
+          "revenue": "\u20b926,164 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b913,357 Cr",
+          "margin": "51.1%"
+        }
+      ],
       "total_assets": "\u20b9686,266 Cr",
       "total_equity": "\u20b9390,705 Cr",
       "total_debt": "\u20b9295,561 Cr",
@@ -191,6 +477,66 @@
       "op_profit": "\u20b9114,727 Cr",
       "pat": "\u20b928,915 Cr",
       "net_margin": "13.1%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-21,687 Cr",
+          "op_profit": "\u20b9118,663 Cr",
+          "pat": "\u20b926,695 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9-20,532 Cr",
+          "op_profit": "\u20b994,402 Cr",
+          "pat": "\u20b933,556 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9-18,309 Cr",
+          "op_profit": "\u20b976,926 Cr",
+          "pat": "\u20b97,467 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b9-16,543 Cr",
+          "op_profit": "\u20b968,152 Cr",
+          "pat": "\u20b98,346 Cr",
+          "margin": "N/A"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-5,956 Cr",
+          "op_profit": "\u20b934,318 Cr",
+          "pat": "\u20b98,167 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-5,606 Cr",
+          "op_profit": "\u20b932,454 Cr",
+          "pat": "\u20b97,325 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-5,623 Cr",
+          "op_profit": "\u20b931,601 Cr",
+          "pat": "\u20b96,630 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-5,461 Cr",
+          "op_profit": "\u20b928,430 Cr",
+          "pat": "\u20b95,948 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b9363,343 Cr",
       "total_equity": "\u20b9161,863 Cr",
       "total_debt": "\u20b9201,480 Cr",
@@ -223,6 +569,66 @@
       "op_profit": "\u20b934,754 Cr",
       "pat": "\u20b918,312 Cr",
       "net_margin": "5.6%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9103 Cr",
+          "op_profit": "\u20b936,334 Cr",
+          "pat": "\u20b916,084 Cr",
+          "margin": "15626.1%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9-1,148 Cr",
+          "op_profit": "\u20b933,648 Cr",
+          "pat": "\u20b915,037 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9-1,341 Cr",
+          "op_profit": "\u20b928,861 Cr",
+          "pat": "\u20b913,059 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b9-1,572 Cr",
+          "op_profit": "\u20b926,161 Cr",
+          "pat": "\u20b910,471 Cr",
+          "margin": "N/A"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-539 Cr",
+          "op_profit": "\u20b98,493 Cr",
+          "pat": "\u20b94,123 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-679 Cr",
+          "op_profit": "\u20b910,189 Cr",
+          "pat": "\u20b95,326 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-625 Cr",
+          "op_profit": "\u20b98,858 Cr",
+          "pat": "\u20b94,559 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-782 Cr",
+          "op_profit": "\u20b97,674 Cr",
+          "pat": "\u20b93,617 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b9234,805 Cr",
       "total_equity": "\u20b9109,308 Cr",
       "total_debt": "\u20b9125,497 Cr",
@@ -255,6 +661,66 @@
       "op_profit": "N/A",
       "pat": "\u20b986,210 Cr",
       "net_margin": "22.4%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9199,928 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b983,299 Cr",
+          "margin": "41.7%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9189,369 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b977,561 Cr",
+          "margin": "41.0%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9179,452 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b967,085 Cr",
+          "margin": "37.4%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b9160,864 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b955,648 Cr",
+          "margin": "34.6%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b953,993 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b924,113 Cr",
+          "margin": "44.7%"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b951,127 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b919,643 Cr",
+          "margin": "38.4%"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b951,807 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b921,317 Cr",
+          "margin": "41.1%"
+        },
+        {
+          "period": "Sep 2025",
+          "revenue": "N/A",
+          "op_profit": "N/A",
+          "pat": "N/A",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b91,442,284 Cr",
       "total_equity": "\u20b9621,950 Cr",
       "total_debt": "\u20b9820,334 Cr",
@@ -287,6 +753,66 @@
       "op_profit": "N/A",
       "pat": "\u20b929,950 Cr",
       "net_margin": "37.0%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b958,463 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b926,385 Cr",
+          "margin": "45.1%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b956,338 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b928,055 Cr",
+          "margin": "49.8%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b951,368 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b926,386 Cr",
+          "margin": "51.4%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b944,059 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b910,818 Cr",
+          "margin": "24.6%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b915,327 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b97,632 Cr",
+          "margin": "49.8%"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b915,091 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b97,603 Cr",
+          "margin": "50.4%"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b914,924 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b97,011 Cr",
+          "margin": "47.0%"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b914,110 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b96,244 Cr",
+          "margin": "44.3%"
+        }
+      ],
       "total_assets": "\u20b9555,823 Cr",
       "total_equity": "\u20b9231,335 Cr",
       "total_debt": "\u20b9324,488 Cr",
@@ -319,6 +845,66 @@
       "op_profit": "\u20b98,890 Cr",
       "pat": "\u20b95,759 Cr",
       "net_margin": "6.2%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-889 Cr",
+          "op_profit": "\u20b98,771 Cr",
+          "pat": "\u20b95,073 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9-652 Cr",
+          "op_profit": "\u20b96,023 Cr",
+          "pat": "\u20b93,337 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9-370 Cr",
+          "op_profit": "\u20b95,638 Cr",
+          "pat": "\u20b93,496 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b9-157 Cr",
+          "op_profit": "\u20b95,065 Cr",
+          "pat": "\u20b93,250 Cr",
+          "margin": "N/A"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-353 Cr",
+          "op_profit": "\u20b93,038 Cr",
+          "pat": "\u20b91,777 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-350 Cr",
+          "op_profit": "\u20b92,122 Cr",
+          "pat": "\u20b91,179 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-282 Cr",
+          "op_profit": "\u20b92,864 Cr",
+          "pat": "\u20b91,684 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-271 Cr",
+          "op_profit": "\u20b91,935 Cr",
+          "pat": "\u20b91,091 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b946,316 Cr",
       "total_equity": "\u20b915,695 Cr",
       "total_debt": "\u20b930,621 Cr",
@@ -351,6 +937,66 @@
       "op_profit": "\u20b925,480 Cr",
       "pat": "\u20b919,839 Cr",
       "net_margin": "25.9%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b91,377 Cr",
+          "op_profit": "\u20b929,428 Cr",
+          "pat": "\u20b920,690 Cr",
+          "margin": "1502.4%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b91,444 Cr",
+          "op_profit": "\u20b927,898 Cr",
+          "pat": "\u20b919,731 Cr",
+          "margin": "1366.7%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b91,658 Cr",
+          "op_profit": "\u20b927,355 Cr",
+          "pat": "\u20b919,898 Cr",
+          "margin": "1200.4%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b91,456 Cr",
+          "op_profit": "\u20b927,444 Cr",
+          "pat": "\u20b919,192 Cr",
+          "margin": "1317.9%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-40 Cr",
+          "op_profit": "\u20b95,922 Cr",
+          "pat": "\u20b94,394 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-29 Cr",
+          "op_profit": "\u20b97,649 Cr",
+          "pat": "\u20b95,388 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-20 Cr",
+          "op_profit": "\u20b97,559 Cr",
+          "pat": "\u20b94,931 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-16 Cr",
+          "op_profit": "\u20b97,567 Cr",
+          "pat": "\u20b95,244 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b974,920 Cr",
       "total_equity": "\u20b972,521 Cr",
       "total_debt": "\u20b92,399 Cr",
@@ -383,6 +1029,66 @@
       "op_profit": "\u20b916,583 Cr",
       "pat": "\u20b912,096 Cr",
       "net_margin": "20.2%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9576 Cr",
+          "op_profit": "\u20b918,848 Cr",
+          "pat": "\u20b911,479 Cr",
+          "margin": "1992.6%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9999 Cr",
+          "op_profit": "\u20b916,726 Cr",
+          "pat": "\u20b910,929 Cr",
+          "margin": "1094.2%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9784 Cr",
+          "op_profit": "\u20b914,294 Cr",
+          "pat": "\u20b99,576 Cr",
+          "margin": "1220.8%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b9212 Cr",
+          "op_profit": "\u20b912,292 Cr",
+          "pat": "\u20b98,474 Cr",
+          "margin": "3986.8%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-100 Cr",
+          "op_profit": "\u20b95,141 Cr",
+          "pat": "\u20b92,895 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-86 Cr",
+          "op_profit": "\u20b94,413 Cr",
+          "pat": "\u20b92,714 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-78 Cr",
+          "op_profit": "\u20b95,527 Cr",
+          "pat": "\u20b93,369 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-75 Cr",
+          "op_profit": "\u20b94,766 Cr",
+          "pat": "\u20b92,279 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b988,197 Cr",
       "total_equity": "\u20b983,570 Cr",
       "total_debt": "\u20b94,627 Cr",
@@ -415,6 +1121,66 @@
       "op_profit": "\u20b921,226 Cr",
       "pat": "\u20b914,334 Cr",
       "net_margin": "7.3%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9145 Cr",
+          "op_profit": "\u20b922,432 Cr",
+          "pat": "\u20b914,680 Cr",
+          "margin": "10109.8%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b9239 Cr",
+          "op_profit": "\u20b920,961 Cr",
+          "pat": "\u20b914,500 Cr",
+          "margin": "6074.7%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b9-194 Cr",
+          "op_profit": "\u20b919,283 Cr",
+          "pat": "\u20b913,488 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b998 Cr",
+          "op_profit": "\u20b913,655 Cr",
+          "pat": "\u20b98,264 Cr",
+          "margin": "8466.9%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-64 Cr",
+          "op_profit": "\u20b96,285 Cr",
+          "pat": "\u20b93,447 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-73 Cr",
+          "op_profit": "\u20b96,740 Cr",
+          "pat": "\u20b93,659 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-62 Cr",
+          "op_profit": "\u20b96,714 Cr",
+          "pat": "\u20b93,879 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-47 Cr",
+          "op_profit": "\u20b96,546 Cr",
+          "pat": "\u20b93,792 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b9107,259 Cr",
       "total_equity": "\u20b9107,157 Cr",
       "total_debt": "\u20b9102 Cr",
@@ -447,6 +1213,66 @@
       "op_profit": "N/A",
       "pat": "\u20b921,694 Cr",
       "net_margin": "43.8%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b944,113 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b919,017 Cr",
+          "margin": "43.1%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b936,420 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b916,638 Cr",
+          "margin": "45.7%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b929,582 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b914,451 Cr",
+          "margin": "48.9%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b922,989 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b911,508 Cr",
+          "margin": "50.1%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b912,571 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b95,986 Cr",
+          "margin": "47.6%"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b911,781 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b95,465 Cr",
+          "margin": "46.4%"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b911,318 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b93,978 Cr",
+          "margin": "35.1%"
+        },
+        {
+          "period": "Sep 2025",
+          "revenue": "\u20b910,785 Cr",
+          "op_profit": "N/A",
+          "pat": "\u20b94,875 Cr",
+          "margin": "45.2%"
+        }
+      ],
       "total_assets": "\u20b9555,900 Cr",
       "total_equity": "\u20b9123,205 Cr",
       "total_debt": "\u20b9432,695 Cr",
@@ -479,6 +1305,66 @@
       "op_profit": "\u20b9662 Cr",
       "pat": "\u20b9495 Cr",
       "net_margin": "31.8%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b915 Cr",
+          "op_profit": "\u20b9713 Cr",
+          "pat": "\u20b9476 Cr",
+          "margin": "3132.4%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b911 Cr",
+          "op_profit": "\u20b9672 Cr",
+          "pat": "\u20b9470 Cr",
+          "margin": "4356.2%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b97 Cr",
+          "op_profit": "\u20b9520 Cr",
+          "pat": "\u20b9354 Cr",
+          "margin": "5246.2%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b91 Cr",
+          "op_profit": "\u20b9430 Cr",
+          "pat": "\u20b9285 Cr",
+          "margin": "21290.4%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-2 Cr",
+          "op_profit": "\u20b9199 Cr",
+          "pat": "\u20b9128 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-2 Cr",
+          "op_profit": "\u20b9196 Cr",
+          "pat": "\u20b9126 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-2 Cr",
+          "op_profit": "\u20b9192 Cr",
+          "pat": "\u20b9126 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Sep 2025",
+          "revenue": "N/A",
+          "op_profit": "N/A",
+          "pat": "N/A",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b91,388 Cr",
       "total_equity": "\u20b91,323 Cr",
       "total_debt": "\u20b964 Cr",
@@ -511,6 +1397,66 @@
       "op_profit": "\u20b9599 Cr",
       "pat": "\u20b9417 Cr",
       "net_margin": "39.1%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b956 Cr",
+          "op_profit": "\u20b9582 Cr",
+          "pat": "\u20b9413 Cr",
+          "margin": "732.2%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b983 Cr",
+          "op_profit": "\u20b9537 Cr",
+          "pat": "\u20b9375 Cr",
+          "margin": "453.6%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b953 Cr",
+          "op_profit": "\u20b9494 Cr",
+          "pat": "\u20b9363 Cr",
+          "margin": "685.9%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b925 Cr",
+          "op_profit": "\u20b9407 Cr",
+          "pat": "\u20b9291 Cr",
+          "margin": "1146.6%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-7 Cr",
+          "op_profit": "\u20b9146 Cr",
+          "pat": "\u20b9100 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-8 Cr",
+          "op_profit": "\u20b9138 Cr",
+          "pat": "\u20b993 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-8 Cr",
+          "op_profit": "\u20b9152 Cr",
+          "pat": "\u20b9105 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Sep 2025",
+          "revenue": "\u20b9-5 Cr",
+          "op_profit": "\u20b9160 Cr",
+          "pat": "\u20b9119 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b93,268 Cr",
       "total_equity": "\u20b92,996 Cr",
       "total_debt": "\u20b9272 Cr",
@@ -543,6 +1489,66 @@
       "op_profit": "\u20b9352 Cr",
       "pat": "\u20b9233 Cr",
       "net_margin": "23.7%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b94 Cr",
+          "op_profit": "\u20b9367 Cr",
+          "pat": "\u20b9230 Cr",
+          "margin": "5490.2%"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b93 Cr",
+          "op_profit": "\u20b9399 Cr",
+          "pat": "\u20b9264 Cr",
+          "margin": "8325.1%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b92 Cr",
+          "op_profit": "\u20b9346 Cr",
+          "pat": "\u20b9244 Cr",
+          "margin": "15764.0%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b96 Cr",
+          "op_profit": "\u20b9420 Cr",
+          "pat": "\u20b9295 Cr",
+          "margin": "5390.4%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-0 Cr",
+          "op_profit": "\u20b9119 Cr",
+          "pat": "\u20b973 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-0 Cr",
+          "op_profit": "\u20b999 Cr",
+          "pat": "\u20b958 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-0 Cr",
+          "op_profit": "\u20b982 Cr",
+          "pat": "\u20b946 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-0 Cr",
+          "op_profit": "\u20b9113 Cr",
+          "pat": "\u20b970 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b91,585 Cr",
       "total_equity": "\u20b91,583 Cr",
       "total_debt": "\u20b92 Cr",
@@ -575,6 +1581,66 @@
       "op_profit": "\u20b9177 Cr",
       "pat": "\u20b998 Cr",
       "net_margin": "3.2%",
+      "annual_pl": [
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-6 Cr",
+          "op_profit": "\u20b9295 Cr",
+          "pat": "\u20b9143 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2025",
+          "revenue": "\u20b919 Cr",
+          "op_profit": "\u20b9342 Cr",
+          "pat": "\u20b9208 Cr",
+          "margin": "1084.4%"
+        },
+        {
+          "period": "Mar 2024",
+          "revenue": "\u20b919 Cr",
+          "op_profit": "\u20b9321 Cr",
+          "pat": "\u20b9196 Cr",
+          "margin": "1030.1%"
+        },
+        {
+          "period": "Mar 2023",
+          "revenue": "\u20b916 Cr",
+          "op_profit": "\u20b9301 Cr",
+          "pat": "\u20b9197 Cr",
+          "margin": "1221.6%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-9 Cr",
+          "op_profit": "\u20b938 Cr",
+          "pat": "\u20b94 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-11 Cr",
+          "op_profit": "\u20b963 Cr",
+          "pat": "\u20b924 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-8 Cr",
+          "op_profit": "\u20b972 Cr",
+          "pat": "\u20b920 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-3 Cr",
+          "op_profit": "\u20b981 Cr",
+          "pat": "\u20b949 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "N/A",
       "total_equity": "N/A",
       "total_debt": "\u20b9482 Cr",
@@ -607,6 +1673,66 @@
       "op_profit": "\u20b91,509 Cr",
       "pat": "\u20b91,062 Cr",
       "net_margin": "17.1%",
+      "annual_pl": [
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b940 Cr",
+          "op_profit": "\u20b91,404 Cr",
+          "pat": "\u20b9950 Cr",
+          "margin": "2381.4%"
+        },
+        {
+          "period": "Dec 2024",
+          "revenue": "\u20b959 Cr",
+          "op_profit": "\u20b91,357 Cr",
+          "pat": "\u20b9927 Cr",
+          "margin": "1576.1%"
+        },
+        {
+          "period": "Dec 2023",
+          "revenue": "\u20b942 Cr",
+          "op_profit": "\u20b91,267 Cr",
+          "pat": "\u20b9864 Cr",
+          "margin": "2038.0%"
+        },
+        {
+          "period": "Dec 2022",
+          "revenue": "\u20b941 Cr",
+          "op_profit": "\u20b91,175 Cr",
+          "pat": "\u20b9815 Cr",
+          "margin": "1974.2%"
+        }
+      ],
+      "quarterly_pl": [
+        {
+          "period": "Jun 2026",
+          "revenue": "\u20b9-2 Cr",
+          "op_profit": "\u20b9478 Cr",
+          "pat": "\u20b9348 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Mar 2026",
+          "revenue": "\u20b9-2 Cr",
+          "op_profit": "\u20b9325 Cr",
+          "pat": "\u20b9242 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Dec 2025",
+          "revenue": "\u20b9-2 Cr",
+          "op_profit": "\u20b9357 Cr",
+          "pat": "\u20b9245 Cr",
+          "margin": "N/A"
+        },
+        {
+          "period": "Jun 2025",
+          "revenue": "\u20b9-3 Cr",
+          "op_profit": "\u20b9332 Cr",
+          "pat": "\u20b9244 Cr",
+          "margin": "N/A"
+        }
+      ],
       "total_assets": "\u20b91,954 Cr",
       "total_equity": "\u20b91,900 Cr",
       "total_debt": "\u20b953 Cr",
