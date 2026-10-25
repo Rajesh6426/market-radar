@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Momentum Radar</title>
+  <title>Market Momentum & Fundamental Radar</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -11,7 +11,6 @@
       --border: #30363d;
       --text: #c9d1d9;
       --text-white: #f0f6fc;
-      --accent-green: #238636;
       --tag-green: #2ea043;
       --tag-neutral: #8b949e;
       --link: #58a6ff;
@@ -24,7 +23,7 @@
       padding: 24px;
     }
     .container {
-      max-width: 960px;
+      max-width: 1040px;
       margin: 0 auto;
     }
     header {
@@ -53,6 +52,11 @@
       color: #3fb950;
       border: 1px solid rgba(46, 160, 67, 0.4);
     }
+    .badge-fund-good {
+      background: rgba(56, 139, 253, 0.15);
+      color: #58a6ff;
+      border: 1px solid rgba(56, 139, 253, 0.3);
+    }
     .badge-neutral {
       background: rgba(139, 148, 158, 0.15);
       color: #8b949e;
@@ -77,13 +81,16 @@
     }
     th, td {
       text-align: left;
-      padding: 12px;
+      padding: 11px 12px;
       border-bottom: 1px solid var(--border);
-      font-size: 14px;
+      font-size: 13.5px;
     }
     th {
       color: #8b949e;
       font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     a.symbol-link {
       color: var(--link);
@@ -105,17 +112,17 @@
 <body>
   <div class="container">
     <header>
-      <h1>🎯 Market Momentum Radar</h1>
-      <div class="timestamp" id="last-updated">Checking latest scan...</div>
+      <h1>🎯 High-Conviction Market Radar</h1>
+      <div class="timestamp" id="last-updated">Checking latest cloud scan...</div>
     </header>
 
     <div class="card">
-      <h2>🔥 High-Conviction Matches (Near 52W High + Vol Surge)</h2>
+      <h2>🔥 High-Conviction Setups (Technicals + Fundamentals Aligned)</h2>
       <div id="matches-table-container">Loading...</div>
     </div>
 
     <div class="card">
-      <h2>📊 All Monitored Watchlist</h2>
+      <h2>📊 All Monitored Stocks (Full Technical & Fundamental Matrix)</h2>
       <div id="all-table-container">Loading...</div>
     </div>
   </div>
@@ -124,11 +131,11 @@
     fetch('results.json?v=' + new Date().getTime())
       .then(res => res.json())
       .then(data => {
-        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count} setups found)`;
+        document.getElementById('last-updated').innerText = `Last Cloud Scan: ${data.last_updated} (${data.match_count} high conviction setups found)`;
         
         const matchesContainer = document.getElementById('matches-table-container');
         if (data.matches.length === 0) {
-          matchesContainer.innerHTML = '<p style="color:#8b949e;">No setups met all 4 strict criteria today. Zero trade day.</p>';
+          matchesContainer.innerHTML = '<p style="color:#8b949e;">No setups met both strict technical momentum & fundamental criteria today. Capital preserved.</p>';
         } else {
           matchesContainer.innerHTML = buildTable(data.matches);
         }
@@ -136,7 +143,7 @@
         document.getElementById('all-table-container').innerHTML = buildTable(data.all_scanned);
       })
       .catch(err => {
-        document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting first scan data...</p>';
+        document.getElementById('matches-table-container').innerHTML = '<p style="color:#f85149;">Awaiting scan data...</p>';
       });
 
     function buildTable(list) {
@@ -150,13 +157,17 @@
           <td>₹${item.price}</td>
           <td>
             -${item.pct_off_52w}%
-            <div class="subtext">52W High: ₹${item.high_52w}</div>
+            <div class="subtext">52W: ₹${item.high_52w}</div>
           </td>
           <td>${item.vol_surge}x</td>
           <td>${item.rsi}</td>
           <td>
-            <span class="badge ${item.matched ? 'badge-match' : 'badge-neutral'}">
-              ${item.matched ? 'ACCUMULATION' : 'NEUTRAL'}
+            <div>ROE: <b>${item.roe}</b></div>
+            <div class="subtext">D/E: ${item.de} | Margin: ${item.net_margin}</div>
+          </td>
+          <td>
+            <span class="badge ${item.matched ? 'badge-match' : (item.fund_strong ? 'badge-fund-good' : 'badge-neutral')}">
+              ${item.matched ? 'HIGH CONVICTION' : (item.fund_strong ? 'STRONG FUNDAMENTALS' : 'NEUTRAL')}
             </span>
           </td>
         </tr>
@@ -170,8 +181,9 @@
               <th>Price</th>
               <th>From 52W High</th>
               <th>Vol Surge</th>
-              <th>RSI (14)</th>
-              <th>Status</th>
+              <th>RSI</th>
+              <th>Fundamentals (ROE / DE / Margins)</th>
+              <th>Conviction</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
