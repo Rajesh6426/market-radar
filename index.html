@@ -289,7 +289,7 @@
           </a>
           <div style="margin-top: 3px; display: flex; gap: 4px;">
             <span class="cap-badge">${item.cap_category || 'Large-Cap'}</span>
-            <span class="cap-badge">${item.sector_type || 'CORP'}</span>
+            <span class="cap-badge">${item.sector_type || 'CORPORATE'}</span>
           </div>
         </td>
       `;
@@ -305,8 +305,8 @@
             <td>-${item.pct_off_52w}%<div class="subtext">52W: ₹${item.high_52w}</div></td>
             <td>${item.vol_surge}x<div class="subtext">RSI: ${item.rsi}</div></td>
             <td>
-              <span class="score-badge ${isHighPass ? '' : 'warn'}">Pass: ${item.screener_score}</span>
-              <div class="subtext">${item.primary_label}: ${item.primary_val} | ${item.secondary_label}: ${item.secondary_val}</div>
+              <span class="score-badge ${isHighPass ? '' : 'warn'}">Pass: ${item.screener_score || 'N/A'}</span>
+              <div class="subtext">${item.primary_label || 'Metric'}: ${item.primary_val || 'N/A'} | ${item.secondary_label || 'Metric'}: ${item.secondary_val || 'N/A'}</div>
             </td>
             <td><div>P/E: <b>${item.pe || 'N/A'}</b></div><div class="subtext">PEG: ${item.peg || 'N/A'}</div></td>
             <td>
